@@ -202,16 +202,18 @@ var Tests = {
 
     Tests.testsRun++;
     var failureMessage = null;
+    // This is the scope which all references "this" in the setup and test methods will resolve to.
+    var testScope = {};
 
     try {
       for (var i = 0; i < contexts.length; i++) {
         if (contexts[i].setupMethod)
-          contexts[i].setupMethod.methodBody();
+          contexts[i].setupMethod.methodBody.apply(testScope);
       }
-      testMethod.methodBody();
+      testMethod.methodBody.apply(testScope);
       for (var i = 0; i < contexts.length; i++) {
         if (contexts[i].tearDownMethod)
-          contexts[i].tearDownMethod.methodBody();
+          contexts[i].tearDownMethod.methodBody.apply(testScope);
       }
     } catch(exception) {
       failureMessage = exception.toString();
