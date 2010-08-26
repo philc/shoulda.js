@@ -1,7 +1,7 @@
 Shouda.js
-=============================
+=========
 
-Shoulda.js is a micro unit testing framework inspired by Ruby's Shoulda framework. It gives you a tight syntax for writing terse, readable unit tests.
+Shoulda.js is a micro javascript unit testing framework inspired by Ruby's Shoulda framework. It gives you a tight syntax for writing terse, readable unit tests.
 
 Example usage
 -------------
@@ -45,9 +45,9 @@ Tips
 ----
 - Calling Tests.run() with a String argument will only run a subset of your tests, e.g. Tests.run("kill the turtle")
 
-- [Chrome's v8 javascript engine](http://code.google.com/apis/v8/intro.html) is a command line JavaScript interpreter that you can use to script and run your unit tests from the command line, outside of the browser.
+- [Chrome's v8 javascript engine](http://code.google.com/apis/v8/intro.html) is a JavaScript interpreter that you can use to script and run your unit tests from the command line, outside of the browser.
 
-- [envjs](http://www.envjs.com/) provides a simulated browser environment. You can use it to run javascript tests at the webpage level with DOM interaction, but without having to run an actual browser.
+- [envjs](http://www.envjs.com/) is a set of javascript files which provide a simulated browser environment. You can use envjs to run javascript tests at the webpage level with DOM interaction, but without having to run an actual browser.
 
 Contributing
 ------------
