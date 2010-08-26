@@ -31,7 +31,7 @@ Shoulda.js provides a DSL for you to grouping tests into logical units called "c
 
     Tests.run();
 
-That's it. The test results are output using console.log(). To see the other available assertions, just glance through the source.
+That's it. To see the other available assertions, just glance through the source.
 
 Stubs
 -----
@@ -48,6 +48,10 @@ Tips
 - [Chrome's v8 javascript engine](http://code.google.com/apis/v8/intro.html) is a JavaScript interpreter that you can use to script and run your unit tests from the command line, outside of the browser.
 
 - [envjs](http://www.envjs.com/) is a set of javascript files which provide a simulated browser environment. You can use envjs to run javascript tests at the webpage level with DOM interaction, but without having to launch an actual browser.
+
+- You can customize how test status is reported by replacing the Tests.outputMethod property. By default, test output is sent to the global print() function, which is how JavaScript engines outside of web browsers print output. To have the output instead go to console.log, change it before running your tests:
+
+    Tests.outputMethod = function(message) { console.log(message); };
 
 Contributing
 ------------

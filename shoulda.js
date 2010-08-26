@@ -151,6 +151,8 @@ var Tests = {
   completedContexts: [],
   testsRun: 0,
   testsFailed: 0,
+  // Set this to be "console.log" when running in a browser. "print" is a function avaiable in Rhino and V8.
+  outputMethod: print,
 
   // The list of callbacks that the developer wants to ensure are called by the end of the test.
   // This is manipulated by the ensureCalled() function.
@@ -240,16 +242,17 @@ var Tests = {
     return contextNames.concat(testName).join(": ");
   },
 
+
   printTestSummary: function() {
     if (Tests.testsFailed > 0)
-      print("Fail (" + Tests.testsFailed + "/" + Tests.testsRun + ")");
+      this.outputMethod("Fail (" + Tests.testsFailed + "/" + Tests.testsRun + ")");
     else
-      print("Pass (" + Tests.testsRun + "/" + Tests.testsRun + ")");
+      this.outputMethod("Pass (" + Tests.testsRun + "/" + Tests.testsRun + ")");
   },
 
   printFailure: function(testName, failureMessage) {
     // TODO(philc): We should consider other output formats, like HTML.
-    print("Fail \"" + testName + "\" - ", failureMessage);
+    this.outputMethod("Fail \"" + testName + "\" - ", failureMessage);
   }
 };
 
