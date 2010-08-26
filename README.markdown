@@ -1,11 +1,11 @@
 Shouda.js
 =========
 
-Shoulda.js is a micro javascript unit testing framework inspired by Ruby's Shoulda framework. It gives you a tight syntax for writing terse, readable unit tests.
+Shoulda.js is a micro javascript unit testing framework inspired by Shoulda for Ruby. It gives you a tight syntax for writing terse, readable unit tests. It weights in at under 300 lines and makes no assumptions about your javascript environment or libraries.
 
 Example usage
 -------------
-Shoulda.js can make use of context blocks. Contexts are a way for you to group tests together into logical units, and optionally share test-case setup code.
+Shoulda.js provides a DSL for you to grouping tests into logical units called "contexts". Contexts can optionally share test-case setup code:
 
     context("super mario",
       setup(function() {
@@ -20,7 +20,7 @@ Shoulda.js can make use of context blocks. Contexts are a way for you to group t
         should("kill the turtle after jumping on it", function() {
           game.mario.jump({ x: 10, y: 0 });
           assert.equal("dead", turtle.state);
-        })
+        }),
 
         should("end the game if mario walks into an enemy turtle", function() {
           game.mario.move({ x: 10, y: 0 });
@@ -31,11 +31,11 @@ Shoulda.js can make use of context blocks. Contexts are a way for you to group t
 
     Tests.run();
 
-That's it. The test results are logged using console.log(). To see the rest of the available assertions, just glance through the source.
+That's it. The test results are output using console.log(). To see the other available assertions, just glance through the source.
 
 Stubs
 -----
-Stubbing means to replace methods that you want to control in your test. You'll often want to stub out expensive methods like talking to the network, or methods which would make your test easier to write. Shoulda provides a simple way to stub out methods:
+Stubbing means to replace methods that you want to control for the duration of your test. You'll often want to stub out expensive methods like talking to the network, or methods which would make your test easier to write. Shoulda provides a simple way to stub out properties and methods:
 
     stub(document, "getElementById", function(id) { assert.equal(id, "marioCharacter"); });
     or
@@ -47,7 +47,7 @@ Tips
 
 - [Chrome's v8 javascript engine](http://code.google.com/apis/v8/intro.html) is a JavaScript interpreter that you can use to script and run your unit tests from the command line, outside of the browser.
 
-- [envjs](http://www.envjs.com/) is a set of javascript files which provide a simulated browser environment. You can use envjs to run javascript tests at the webpage level with DOM interaction, but without having to run an actual browser.
+- [envjs](http://www.envjs.com/) is a set of javascript files which provide a simulated browser environment. You can use envjs to run javascript tests at the webpage level with DOM interaction, but without having to launch an actual browser.
 
 Contributing
 ------------

@@ -14,22 +14,22 @@
      context("Chess piece",
        setup: function() { ... },
        should("Only allow valid moves", function() { ... })
-     }),
+     })
    });
 
  * To stub properties of an object:
 
    // Stub a method
    stub(Request, "send", function() { ... });
+   stub(Request, "send", returns("hello"));
 
    // Stub a property
    stubs(Request, "url", "www.ooyala.com");
   
  * To run your tests after you've defined them using contexts:
    Tests.run()
- * Note that Tests.run() can take a string argument, where only tests whose names match
- * the argument will be run.
-*/
+ * Calling Tests.run() with a String argument will only run the subset of your tests which match the argument.
+ */
 
 /*
  * Assertions.
@@ -123,7 +123,7 @@ function Context(name, contents) {
 }
 
 /*
- * See the usage documentation for Shoulda.js for details on how to use the "context" and "should" functions.
+ * See the usage documentation for details on how to use the "context" and "should" functions.
  */
 function context() {
   var newContext = new Context(arguments[0], Array.prototype.slice.call(arguments, 1));
@@ -220,7 +220,7 @@ var Tests = {
     }
 
     if (!failureMessage && Tests.requiredCallbacks.length > 0)
-      failureMessage = "A callback function should have been called during this test, but it wans't.";
+      failureMessage = "A callback function should have been called during this test, but it wasn't.";
     if (failureMessage) {
       Tests.testsFailed++;
       Tests.printFailure(fullTestName, failureMessage);
