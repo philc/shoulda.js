@@ -80,7 +80,8 @@ var ensureCalled = function(toExecute) {
     var index = Tests.requiredCallbacks.indexOf(wrappedFunction);
     if (index >= 0)
       Tests.requiredCallbacks.splice(index, 1);
-    return toExecute.apply(null, arguments);
+    if (toExecute)
+      return toExecute.apply(null, arguments);
   };
   Tests.requiredCallbacks.push(wrappedFunction);
   return wrappedFunction;
@@ -151,7 +152,7 @@ var Tests = {
   completedContexts: [],
   testsRun: 0,
   testsFailed: 0,
-  // Set this to be "console.log" when running in a browser. "print" is a function avaiable in Rhino and V8.
+  // Set this to be "console.log" when running in a browser. "print" is a function avaiable to Rhino and V8.
   outputMethod: print,
 
   // The list of callbacks that the developer wants to ensure are called by the end of the test.
@@ -241,7 +242,6 @@ var Tests = {
       contextNames.push(contexts[i].name);
     return contextNames.concat(testName).join(": ");
   },
-
 
   printTestSummary: function() {
     if (Tests.testsFailed > 0)
