@@ -277,7 +277,7 @@ Stubs = {
 
   clearStubs: function() {
     // Restore stubs in the reverse order they were defined in, in case the same property was stubbed twice.
-    for (var i = Stubs.stubbedObjects.length - 1; i > 0; i--) {
+    for (var i = Stubs.stubbedObjects.length - 1; i >= 0; i--) {
       var stubProperties = Stubs.stubbedObjects[i];
       stubProperties.object[stubProperties.propertyName] = stubProperties.original;
     }
