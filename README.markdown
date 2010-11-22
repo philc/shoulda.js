@@ -49,9 +49,7 @@ Tips
 
 - [envjs](http://www.envjs.com/) is a set of javascript files which provide a simulated browser environment. You can use envjs to run javascript tests at the webpage level with DOM interaction, but without having to launch an actual browser.
 
-- You can customize how test status is reported by replacing the Tests.outputMethod property. By default, test output is sent to the global print() function, which is how JavaScript engines outside of web browsers print output. To have the output instead go to console.log, change it before running your tests:
-
-    Tests.outputMethod = function(message) { console.log(message); };
+- You can customize how test status is reported by replacing the Tests.outputMethod property with your own function. By default, shoulda.js will use console.log in a browser and the global print() function in command line javascript shells like V8.
 
 Contributing
 ------------
