@@ -20,11 +20,11 @@
  * To stub properties of an object:
 
    // Stub a method
-   stub(Request, "send", function() { ... });
-   stub(Request, "send", returns("hello"));
+   stub(document, "getElementById", function() { ... });
+   stub(document, "getElementById", returns(myElement));
 
    // Stub a property
-   stubs(Request, "url", "www.ooyala.com");
+   stubs(window.location, "href", "http://myurl.com");
   
  * To run your tests after you've defined them using contexts:
    Tests.run()
@@ -63,7 +63,7 @@ var assert = {
 
   fail: function(message) { throw new AssertionError(message); },
 
-  /* Used for printing out the arugments that passed to assertions. */
+  /* Used for printing the arguments passed to assertions. */
   _printObject: function(object) {
     if (object == null) return "null";
     else if (typeof object == "string") return '"' + object + '"';
@@ -97,7 +97,7 @@ AssertionError.prototype.constructor = AssertionError;
 
 /*
  * A Context is a named set of test methods and nested contexts, with optional setup and tearDown blocks.
- * - contents: an array including a setup and tearDown method, test methods, and nested contexts.
+ * - contents: an array which can include a setup and tearDown method, test methods, and nested contexts.
  */
 function Context(name, contents) {
   Context.nextId = Context.nextId || 0;
@@ -161,7 +161,7 @@ var Tests = {
 
   /*
    * Run all contexts which have been defined.
-   * - testNameFilter: a String. If provided, only run tests which match testNameFilter.
+   * - testNameFilter: a String. If provided, only run tests which match testNameFilter will be run.
    */
   run: function(testNameFilter) {
     // Run all of the top level contexts (those not defined within another context) which will in turn run
@@ -235,7 +235,7 @@ var Tests = {
     Stubs.clearStubs();
   },
 
-  /* The fully-qualified name of the test or context, e.g. context1: context2: testName. */
+  /* The fully-qualified name of the test or context, e.g. "context1: context2: testName". */
   fullyQualifiedName: function(testName, contexts) {
     var contextNames = [];
     for (var i = 0; i < contexts.length; i++)
