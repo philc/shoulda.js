@@ -1,7 +1,7 @@
 Shouda.js
 =========
 
-Shoulda.js is a micro javascript unit testing framework inspired by Shoulda for Ruby. It gives you a tight syntax for writing terse, readable unit tests. It weights in at under 300 lines and makes no assumptions about your javascript environment or libraries.
+Shoulda.js is a micro JavaScript unit testing framework inspired by Shoulda for Ruby. It gives you a tight syntax for writing terse, readable unit tests. It weights in at under 300 lines and makes no assumptions about your JavaScript environment or libraries.
 
 Example usage
 -------------
@@ -45,17 +45,17 @@ Tips
 ----
 - Calling Tests.run() with a String argument will only run a subset of your tests, e.g. Tests.run("kill the turtle")
 
-- [Chrome's v8 javascript engine](http://code.google.com/apis/v8/intro.html) is a JavaScript interpreter that you can use to script and run your unit tests from the command line, outside of the browser.
+- [Chrome's v8 JavaScript engine](http://code.google.com/apis/v8/intro.html) is a JavaScript interpreter that you can use to script and run your unit tests from the command line, outside of the browser.
 
-- [envjs](http://www.envjs.com/) is a set of javascript files which provide a simulated browser environment. You can use envjs to run javascript tests at the webpage level with DOM interaction, but without having to launch an actual browser.
+- [envjs](http://www.envjs.com/) is a set of JavaScript files which provide a simulated browser environment. You can use envjs to run JavaScript tests at the webpage level with DOM interaction, but without having to launch an actual browser.
 
-- You can customize how test status is reported by replacing the Tests.outputMethod property with your own function. By default, shoulda.js will use console.log in a browser and the global print() function in command line javascript shells like V8.
+- You can customize how test status is reported by replacing the Tests.outputMethod property with your own function. By default, shoulda.js will use console.log in a browser and the global print() function in command line JavaScript shells like V8.
 
 Contributing
 ------------
 Contributors are welcome! Feel free to ping me with ideas for enhancements.
 
-A short guide or tutorial on how to do command-line unit testing in javascript using shoulda.js would be great in helping folks get started.
+A short guide or tutorial on how to do command-line unit testing in JavaScript using shoulda.js would be great in helping folks get started.
 
 License
 -------
