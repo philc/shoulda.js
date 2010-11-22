@@ -57,6 +57,8 @@ Contributing
 ------------
 Contributors are welcome! Feel free to ping me with ideas for enhancements.
 
+A short guide or tutorial on how to do command-line unit testing in javascript using shoulda.js would be great in helping folks get started.
+
 License
 -------
 Licensed under the [MIT license](http://www.opensource.org/licenses/mit-license.php).
