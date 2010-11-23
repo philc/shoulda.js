@@ -1,7 +1,7 @@
 Shouda.js
 =========
 
-Shoulda.js is a micro JavaScript unit testing framework inspired by Shoulda for Ruby. It gives you a tight syntax for writing terse, readable unit tests. It weights in at under 300 lines and makes no assumptions about your JavaScript environment or libraries.
+Shoulda.js is a micro JavaScript unit testing framework inspired by Shoulda for Ruby. It gives you a tight syntax for writing terse, readable unit tests. It weighs in at under 300 lines and makes no assumptions about your JavaScript environment or libraries.
 
 Example usage
 -------------
