@@ -16,7 +16,7 @@ Shoulda.js provides a DSL for you to grouping tests into logical units called "c
         setup(function() {
           turtle = game.addTurtleEnemy({ x: 10, y: 0 });
         }),
-        
+
         should("kill the turtle after jumping on it", function() {
           game.mario.jump({ x: 10, y: 0 });
           assert.equal("dead", turtle.state);
