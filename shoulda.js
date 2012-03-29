@@ -31,10 +31,12 @@
  * Calling Tests.run() with a String argument will only run the subset of your tests which match the argument.
  */
 
+scope = (typeof window === "undefined") ? global : window
+
 /*
  * Assertions.
  */
-var assert = {
+scope.assert = {
   isTrue: function(value) {
     if (!value)
       this.fail("Expected true, but was " + value);
@@ -75,7 +77,7 @@ var assert = {
  * ensureCalled takes a function and ensures that it gets called by the end of the test case. This is
  * useful when you add callbacks to an object you're testing and you want to make sure they get called.
  */
-var ensureCalled = function(toExecute) {
+scope.ensureCalled = function(toExecute) {
   var wrappedFunction = function() {
     var index = Tests.requiredCallbacks.indexOf(wrappedFunction);
     if (index >= 0)
@@ -87,7 +89,7 @@ var ensureCalled = function(toExecute) {
   return wrappedFunction;
 };
 
-function AssertionError(message) {
+scope.AssertionError = function(message) {
   this.name = AssertionError;
   this.message = message;
 }
@@ -99,7 +101,7 @@ AssertionError.prototype.constructor = AssertionError;
  * A Context is a named set of test methods and nested contexts, with optional setup and tearDown blocks.
  * - contents: an array which can include a setup and tearDown method, test methods, and nested contexts.
  */
-function Context(name, contents) {
+scope.Context = function(name, contents) {
   Context.nextId = Context.nextId || 0;
   this.id = Context.nextId;
   Context.nextId++;
@@ -126,20 +128,20 @@ function Context(name, contents) {
 /*
  * See the usage documentation for details on how to use the "context" and "should" functions.
  */
-function context() {
+scope.context = function() {
   var newContext = new Context(arguments[0], Array.prototype.slice.call(arguments, 1));
   Tests.testContexts.push(newContext);
   return newContext;
 }
 
-function setup() { return new SetupMethod(arguments[0]); }
-function SetupMethod(methodBody) { this.methodBody = methodBody; }
+scope.setup = function() { return new SetupMethod(arguments[0]); }
+scope.SetupMethod = function(methodBody) { this.methodBody = methodBody; }
 
-function tearDown() { return new TearDownMethod(arguments[0]); }
-function TearDownMethod(methodBody) { this.methodBody = methodBody; }
+scope.tearDown = function() { return new TearDownMethod(arguments[0]); }
+scope.TearDownMethod = function(methodBody) { this.methodBody = methodBody; }
 
-function should(name, methodBody) { return new TestMethod(name, methodBody); }
-function TestMethod(name, methodBody) {
+scope.should = function(name, methodBody) { return new TestMethod(name, methodBody); }
+scope.TestMethod = function(name, methodBody) {
   this.name = name;
   this.methodBody = methodBody;
 }
@@ -147,7 +149,7 @@ function TestMethod(name, methodBody) {
 /*
  * Tests is used to run tests and keep track of the success and failure counts.
  */
-var Tests = {
+scope.Tests = {
   testContexts: [],
   completedContexts: [],
   testsRun: 0,
@@ -272,7 +274,7 @@ var Tests = {
  * Stubs
  */
 
-function stub(object, propertyName, returnValue) {
+scope.stub = function(object, propertyName, returnValue) {
   Stubs.stubbedObjects.push( { object:object, propertyName: propertyName, original: object[propertyName] });
   object[propertyName] = returnValue;
 }
@@ -282,7 +284,7 @@ function stub(object, propertyName, returnValue) {
  * want to hard code its return value, for example:
  * stubs(shoppingCart, "calculateTotal", returns(4.0))
  */
-var returns = function(value) { return function() { return value; } };
+scope.returns = function(value) { return function() { return value; } };
 
 Stubs = {
   stubbedObjects: [],
