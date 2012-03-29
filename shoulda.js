@@ -14,8 +14,8 @@
      context("Chess piece",
        setup: function() { ... },
        should("Only allow valid moves", function() { ... })
-     })
-   });
+     )
+   );
 
  * To stub properties of an object:
 
