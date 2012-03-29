@@ -63,6 +63,26 @@ scope.assert = {
       this.fail("Expected " + this._printObject(expected) + " but received " + this._printObject(actual));
   },
 
+  // It would be nice to call this 'throws', but all Java keywords are Javascript keywords and hence 'throws'
+  // is a JS keyword. Sigh.
+  throwsException: function(expression, expectedExceptionName) {
+    try {
+      expression();
+    } catch(exception) {
+      if (expectedExceptionName) {
+        if (exception.name === expectedExceptionName) return;
+        else {
+          assert.fail("Expected exception " + expectedExceptionName + " to be thrown but exception " +
+            exception.name + " was thrown instead.");
+        }
+      } else return;
+    }
+    if (expectedExceptionName)
+      assert.fail("Expected exception " + expectedExceptionName + " but no exception was thrown.");
+    else
+      assert.fail("Expected exception but none was thrown.");
+  },
+
   fail: function(message) { throw new AssertionError(message); },
 
   /* Used for printing the arguments passed to assertions. */
