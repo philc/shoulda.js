@@ -14,8 +14,8 @@
      context("Chess piece",
        setup: function() { ... },
        should("Only allow valid moves", function() { ... })
-     })
-   });
+     )
+   );
 
  * To stub properties of an object:
 
@@ -25,7 +25,7 @@
 
    // Stub a property
    stubs(window.location, "href", "http://myurl.com");
-  
+
  * To run your tests after you've defined them using contexts:
    Tests.run()
  * Calling Tests.run() with a String argument will only run the subset of your tests which match the argument.
