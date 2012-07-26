@@ -209,8 +209,8 @@ scope.Tests = {
         Tests.runContext(context, [], testNameFilter);
     }
     Tests.printTestSummary();
-    Tests.testRun = 0;
-    Tests.testFailed = 0;
+    Tests.testsRun = 0;
+    Tests.testsFailed = 0;
   },
 
   /*
