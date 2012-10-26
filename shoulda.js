@@ -202,6 +202,8 @@ scope.Tests = {
     // any nested contexts. We know that the very last context ever added to Tests.testContexts is a top level
     // context. Also note that any contexts which have not already been run by a previous top level context
     // must themselves be top level contexts.
+    Tests.testsRun = 0;
+    Tests.testsFailed = 0;
     for (var i = Tests.testContexts.length - 1; i >= 0; i--) {
       var context = Tests.testContexts[i];
       var isTopLevelContext = !Tests.completedContexts[context.id];
@@ -209,8 +211,6 @@ scope.Tests = {
         Tests.runContext(context, [], testNameFilter);
     }
     Tests.printTestSummary();
-    Tests.testsRun = 0;
-    Tests.testsFailed = 0;
   },
 
   /*
