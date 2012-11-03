@@ -31,7 +31,7 @@
  * Calling Tests.run() with a String argument will only run the subset of your tests which match the argument.
  */
 
-scope = (typeof window === "undefined") ? global : window
+scope = (typeof window === "undefined") ? global : window;
 
 /*
  * Assertions.
@@ -48,16 +48,16 @@ scope.assert = {
   },
 
   equal: function(expected, actual) {
-    if (expected != actual)
+    if (expected !== actual)
       this.fail("Expected " + this._printObject(expected) + " but received " + this._printObject(actual));
   },
 
   arrayEqual: function(expected, actual) {
     var isFailure = false;
-    if (expected == null || expected.length != actual.length)
+    if (expected == null || expected.length !== actual.length)
       isFailure = true;
     for (var i = 0; !isFailure && i < expected.length; i++)
-      if (expected[i] != actual[i])
+      if (expected[i] !== actual[i])
         isFailure = true;
     if (isFailure)
       this.fail("Expected " + this._printObject(expected) + " but received " + this._printObject(actual));
@@ -87,9 +87,18 @@ scope.assert = {
 
   /* Used for printing the arguments passed to assertions. */
   _printObject: function(object) {
-    if (object == null) return "null";
-    else if (typeof object == "string") return '"' + object + '"';
-    else return object.toString();
+    if (object === null) return "null";
+    else if (object === undefined) return "undefined";
+    else if (typeof object === "string") return '"' + object + '"';
+    else {
+        try {
+            return JSON.stringify(object);
+        }
+        catch (exception) {
+            // object might not be stringifiable (e.g. DOM nodes), or JSON.stringify may not exist
+            return object.toString();
+        }
+    }
   }
 };
 
@@ -112,7 +121,7 @@ scope.ensureCalled = function(toExecute) {
 scope.AssertionError = function(message) {
   this.name = AssertionError;
   this.message = message;
-}
+};
 AssertionError.prototype = new Error();
 AssertionError.prototype.constructor = AssertionError;
 
@@ -143,7 +152,7 @@ scope.Context = function(name, contents) {
     else
       this.testMethods.push(testMethod);
   }
-}
+};
 
 /*
  * See the usage documentation for details on how to use the "context" and "should" functions.
@@ -152,19 +161,19 @@ scope.context = function() {
   var newContext = new Context(arguments[0], Array.prototype.slice.call(arguments, 1));
   Tests.testContexts.push(newContext);
   return newContext;
-}
+};
 
-scope.setup = function() { return new SetupMethod(arguments[0]); }
-scope.SetupMethod = function(methodBody) { this.methodBody = methodBody; }
+scope.setup = function() { return new SetupMethod(arguments[0]); };
+scope.SetupMethod = function(methodBody) { this.methodBody = methodBody; };
 
-scope.tearDown = function() { return new TearDownMethod(arguments[0]); }
-scope.TearDownMethod = function(methodBody) { this.methodBody = methodBody; }
+scope.tearDown = function() { return new TearDownMethod(arguments[0]); };
+scope.TearDownMethod = function(methodBody) { this.methodBody = methodBody; };
 
-scope.should = function(name, methodBody) { return new TestMethod(name, methodBody); }
+scope.should = function(name, methodBody) { return new TestMethod(name, methodBody); };
 scope.TestMethod = function(name, methodBody) {
   this.name = name;
   this.methodBody = methodBody;
-}
+};
 
 /*
  * Tests is used to run tests and keep track of the success and failure counts.
@@ -189,11 +198,11 @@ scope.Tests = {
   run: function(testNameFilter) {
     // Pick an output method based on whether we're running in a browser or via a command-line js shell.
     if (!Tests.outputMethod) {
-      var isShell = (typeof(Envjs) != "undefined") || (typeof("window") == "undefined");
+      var isShell = (typeof(Envjs) !== "undefined") || (typeof("window") === "undefined");
       if (isShell)
         Tests.outputMethod = print;
       else if (typeof(console) != "undefined") // Available in browsers.
-        Tests.outputMethod = function() { console.log.apply(console, arguments); }
+        Tests.outputMethod = function() { console.log.apply(console, arguments); };
       else
         Tests.outputMethod = print; // print is available in all command-line shells.
     }
@@ -301,7 +310,7 @@ scope.Tests = {
 scope.stub = function(object, propertyName, returnValue) {
   Stubs.stubbedObjects.push( { object:object, propertyName: propertyName, original: object[propertyName] });
   object[propertyName] = returnValue;
-}
+};
 
 /*
  * returns() is useful when you want to stub out a function (instead of a property) and you
