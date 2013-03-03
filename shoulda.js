@@ -91,13 +91,11 @@ scope.assert = {
     else if (object === undefined) return "undefined";
     else if (typeof object === "string") return '"' + object + '"';
     else {
-        try {
-            return JSON.stringify(object);
-        }
-        catch (exception) {
-            // object might not be stringifiable (e.g. DOM nodes), or JSON.stringify may not exist
-            return object.toString();
-        }
+      try { return JSON.stringify(object); }
+      catch (exception) {
+        // object might not be stringifiable (e.g. DOM nodes), or JSON.stringify may not exist.
+        return object.toString();
+      }
     }
   }
 };
