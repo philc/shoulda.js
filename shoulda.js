@@ -50,7 +50,7 @@ scope.assert = {
 
   equal: function(expected, actual) {
     if (expected !== actual)
-      this.fail("Expected " + this._print(expected) + " but received " + this._print(actual));
+      this.fail(`Expected ${this._print(expected)} but received ${this._print(actual)}`);
   },
 
   arrayEqual: function(expected, actual) {
@@ -61,7 +61,7 @@ scope.assert = {
       if (expected[i] !== actual[i])
         isFailure = true;
     if (isFailure)
-      this.fail("Expected " + this._print(expected) + " but received " + this._print(actual));
+      this.fail(`Expected ${this._print(expected)} but received ${this._print(actual)}`);
   },
 
   // We cannot name this function simply "throws", because it's a reserved Javascript keyword.
@@ -78,7 +78,7 @@ scope.assert = {
       } else return;
     }
     if (expectedExceptionName)
-      assert.fail("Expected exception " + expectedExceptionName + " but no exception was thrown.");
+      assert.fail(`Expected exception ${expectedExceptionName} but no exception was thrown.`);
     else
       assert.fail("Expected exception but none was thrown.");
   },
@@ -290,14 +290,14 @@ scope.Tests = {
 
   printTestSummary: function() {
     if (Tests.testsFailed > 0)
-      this.outputMethod("Fail (" + Tests.testsFailed + "/" + Tests.testsRun + ")");
+      this.outputMethod(`Fail (${Tests.testsFailed}/${Tests.testsRun})`);
     else
-      this.outputMethod("Pass (" + Tests.testsRun + "/" + Tests.testsRun + ")");
+      this.outputMethod(`Pass (${Tests.testsRun}/${Tests.testsRun})`);
   },
 
   printFailure: function(testName, failureMessage) {
     // TODO(philc): We should consider other output formats, like HTML.
-    this.outputMethod("Fail \"" + testName + "\" - ", failureMessage);
+    this.outputMethod(`Fail "${testName}\ - `, failureMessage);
   }
 };
 
