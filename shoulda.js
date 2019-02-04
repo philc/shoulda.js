@@ -64,8 +64,7 @@ scope.assert = {
       this.fail("Expected " + this._printObject(expected) + " but received " + this._printObject(actual));
   },
 
-  // It would be nice to call this 'throws', but all Java keywords are Javascript keywords and hence 'throws'
-  // is a JS keyword. Sigh.
+  // We cannot name this function simply "throws", because it's a reserved Javascript keyword.
   throwsException: function(expression, expectedExceptionName) {
     try {
       expression();
@@ -247,7 +246,7 @@ scope.Tests = {
 
     Tests.testsRun++;
     var failureMessage = null;
-    // This is the scope which all references "this" in the setup and test methods will resolve to.
+    // This is the scope which all references to "this" in the setup and test methods will resolve to.
     var testScope = {};
 
     try {
