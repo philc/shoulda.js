@@ -50,7 +50,7 @@ scope.assert = {
 
   equal: function(expected, actual) {
     if (expected !== actual)
-      this.fail("Expected " + this._printObject(expected) + " but received " + this._printObject(actual));
+      this.fail("Expected " + this._print(expected) + " but received " + this._print(actual));
   },
 
   arrayEqual: function(expected, actual) {
@@ -61,7 +61,7 @@ scope.assert = {
       if (expected[i] !== actual[i])
         isFailure = true;
     if (isFailure)
-      this.fail("Expected " + this._printObject(expected) + " but received " + this._printObject(actual));
+      this.fail("Expected " + this._print(expected) + " but received " + this._print(actual));
   },
 
   // We cannot name this function simply "throws", because it's a reserved Javascript keyword.
@@ -86,7 +86,7 @@ scope.assert = {
   fail: function(message) { throw new AssertionError(message); },
 
   /* Used for printing the arguments passed to assertions. */
-  _printObject: function(object) {
+  _print: function(object) {
     if (object === null) return "null";
     else if (object === undefined) return "undefined";
     else if (typeof object === "string") return '"' + object + '"';
