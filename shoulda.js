@@ -257,7 +257,7 @@ scope.Tests = {
         }
       }
     } catch(exception) {
-      failureMessage = exception.toString();
+      failureMessage = exception.message;
       if (!(exception instanceof AssertionError) && exception.stack)
         failureMessage += ("\n" + exception.stack);
     }
