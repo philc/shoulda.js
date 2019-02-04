@@ -48,6 +48,7 @@ scope.assert = {
       this.fail("Expected false, but got " + value);
   },
 
+  // Does a deep-equal check on complex objects.
   equal: function(expected, actual) {
     const areEqual = (typeof(expected) === "object" ?
                       JSON.stringify(expected) === JSON.stringify(actual) :
