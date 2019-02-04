@@ -40,17 +40,20 @@ let scope = (typeof window === "undefined") ? global : window;
 scope.assert = {
   isTrue: function(value) {
     if (!value)
-      this.fail("Expected true, but was " + value);
+      this.fail("Expected true, but got " + value);
   },
 
   isFalse: function(value) {
     if (value)
-      this.fail("Expected false, but was " + value);
+      this.fail("Expected false, but got " + value);
   },
 
   equal: function(expected, actual) {
-    if (expected !== actual)
-      this.fail(`Expected ${this._print(expected)} but received ${this._print(actual)}`);
+    const areEqual = (typeof(expected) === "object" ?
+                      JSON.stringify(expected) === JSON.stringify(actual) :
+                      expected === actual);
+    if (!areEqual)
+      this.fail(`\nExpected:\n${this._print(expected)}\nGot:\n${this._print(actual)}\n`);
   },
 
   arrayEqual: function(expected, actual) {
@@ -61,7 +64,7 @@ scope.assert = {
       if (expected[i] !== actual[i])
         isFailure = true;
     if (isFailure)
-      this.fail(`Expected ${this._print(expected)} but received ${this._print(actual)}`);
+      this.fail(`Expected ${this._print(expected)} but got ${this._print(actual)}`);
   },
 
   // We cannot name this function simply "throws", because it's a reserved Javascript keyword.
@@ -297,7 +300,7 @@ scope.Tests = {
 
   printFailure: function(testName, failureMessage) {
     // TODO(philc): We should consider other output formats, like HTML.
-    this.outputMethod(`Fail "${testName}\ - `, failureMessage);
+    this.outputMethod(`Fail "${testName}"`, failureMessage);
   }
 };
 
