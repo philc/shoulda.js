@@ -32,7 +32,7 @@
  * Calling Tests.run() with a String argument will only run the subset of your tests which match the argument.
  */
 
-scope = (typeof window === "undefined") ? global : window;
+let scope = (typeof window === "undefined") ? global : window;
 
 /*
  * Assertions.
@@ -54,7 +54,7 @@ scope.assert = {
   },
 
   arrayEqual: function(expected, actual) {
-    var isFailure = false;
+    let isFailure = false;
     if (expected == null || expected.length !== actual.length)
       isFailure = true;
     for (var i = 0; !isFailure && i < expected.length; i++)
@@ -105,7 +105,7 @@ scope.assert = {
  * useful when you add callbacks to an object you're testing and you want to make sure they get called.
  */
 scope.ensureCalled = function(toExecute) {
-  var wrappedFunction = function() {
+  const wrappedFunction = function() {
     var index = Tests.requiredCallbacks.indexOf(wrappedFunction);
     if (index >= 0)
       Tests.requiredCallbacks.splice(index, 1);
@@ -139,8 +139,8 @@ scope.Context = function(name, contents) {
   this.contexts = [];
   this.testMethods = [];
 
-  for (var i = 0; i < contents.length; i++) {
-    var testMethod = contents[i];
+  for (let i = 0; i < contents.length; i++) {
+    const testMethod = contents[i];
     if (testMethod instanceof SetupMethod)
       this.setupMethod = testMethod;
     else if (testMethod instanceof TearDownMethod)
@@ -156,7 +156,7 @@ scope.Context = function(name, contents) {
  * See the usage documentation for details on how to use the "context" and "should" functions.
  */
 scope.context = function() {
-  var newContext = new Context(arguments[0], Array.prototype.slice.call(arguments, 1));
+  const newContext = new Context(arguments[0], Array.prototype.slice.call(arguments, 1));
   Tests.testContexts.push(newContext);
   return newContext;
 };
@@ -196,7 +196,7 @@ scope.Tests = {
   run: function(testNameFilter) {
     // Pick an output method based on whether we're running in a browser or via a command-line js shell.
     if (!Tests.outputMethod) {
-      var isShell = (typeof(Envjs) !== "undefined") || (typeof("window") === "undefined");
+      const isShell = (typeof(Envjs) !== "undefined") || (typeof("window") === "undefined");
       if (isShell)
         Tests.outputMethod = print;
       else if (typeof(console) != "undefined") // Available in browsers.
@@ -211,9 +211,9 @@ scope.Tests = {
     // must themselves be top level contexts.
     Tests.testsRun = 0;
     Tests.testsFailed = 0;
-    for (var i = Tests.testContexts.length - 1; i >= 0; i--) {
-      var context = Tests.testContexts[i];
-      var isTopLevelContext = !Tests.completedContexts[context.id];
+    for (let i = Tests.testContexts.length - 1; i >= 0; i--) {
+      const context = Tests.testContexts[i];
+      const isTopLevelContext = !Tests.completedContexts[context.id];
       if (isTopLevelContext)
         Tests.runContext(context, [], testNameFilter);
     }
@@ -225,11 +225,11 @@ scope.Tests = {
    */
   runContext: function(context, parentContexts, testNameFilter) {
     Tests.completedContexts[context.id] = true;
-    var testMethods = context.testMethods;
+    const testMethods = context.testMethods;
     parentContexts = parentContexts.concat([context]);
-    for (var i = 0; i < context.testMethods.length; i++)
+    for (let i = 0; i < context.testMethods.length; i++)
       Tests.runTest(context.testMethods[i], parentContexts, testNameFilter);
-    for (var i = 0; i < context.contexts.length; i++)
+    for (let i = 0; i < context.contexts.length; i++)
       Tests.runContext(context.contexts[i], parentContexts, testNameFilter);
   },
 
@@ -240,25 +240,25 @@ scope.Tests = {
    * - testNameFilter: A String. If provided, only run the test if it matches the testNameFilter.
    */
   runTest: function(testMethod, contexts, testNameFilter) {
-    var fullTestName = Tests.fullyQualifiedName(testMethod.name, contexts);
+    const fullTestName = Tests.fullyQualifiedName(testMethod.name, contexts);
     if (testNameFilter && fullTestName.indexOf(testNameFilter) == -1)
       return;
 
     Tests.testsRun++;
-    var failureMessage = null;
+    let failureMessage = null;
     // This is the scope which all references to "this" in the setup and test methods will resolve to.
-    var testScope = {};
+    const testScope = {};
 
     try {
       try {
-        for (var i = 0; i < contexts.length; i++) {
+        for (let i = 0; i < contexts.length; i++) {
           if (contexts[i].setupMethod)
             contexts[i].setupMethod.methodBody.apply(testScope);
         }
         testMethod.methodBody.apply(testScope);
       }
       finally {
-        for (var i = 0; i < contexts.length; i++) {
+        for (let i = 0; i < contexts.length; i++) {
           if (contexts[i].tearDownMethod)
             contexts[i].tearDownMethod.methodBody.apply(testScope);
         }
@@ -282,8 +282,8 @@ scope.Tests = {
 
   /* The fully-qualified name of the test or context, e.g. "context1: context2: testName". */
   fullyQualifiedName: function(testName, contexts) {
-    var contextNames = [];
-    for (var i = 0; i < contexts.length; i++)
+    const contextNames = [];
+    for (let i = 0; i < contexts.length; i++)
       contextNames.push(contexts[i].name);
     return contextNames.concat(testName).join(": ");
   },
@@ -322,7 +322,7 @@ Stubs = {
 
   clearStubs: function() {
     // Restore stubs in the reverse order they were defined in, in case the same property was stubbed twice.
-    for (var i = Stubs.stubbedObjects.length - 1; i >= 0; i--) {
+    for (let i = Stubs.stubbedObjects.length - 1; i >= 0; i--) {
       var stubProperties = Stubs.stubbedObjects[i];
       stubProperties.object[stubProperties.propertyName] = stubProperties.original;
     }
