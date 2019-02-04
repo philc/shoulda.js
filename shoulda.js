@@ -57,17 +57,6 @@ scope.assert = {
       this.fail(`\nExpected:\n${this._print(expected)}\nGot:\n${this._print(actual)}\n`);
   },
 
-  arrayEqual: function(expected, actual) {
-    let isFailure = false;
-    if (expected == null || expected.length !== actual.length)
-      isFailure = true;
-    for (var i = 0; !isFailure && i < expected.length; i++)
-      if (expected[i] !== actual[i])
-        isFailure = true;
-    if (isFailure)
-      this.fail(`Expected ${this._print(expected)} but got ${this._print(actual)}`);
-  },
-
   // We cannot name this function simply "throws", because it's a reserved Javascript keyword.
   throwsException: function(expression, expectedExceptionName) {
     try {
