@@ -95,7 +95,7 @@ scope.assert = {
     else if (object === undefined) return "undefined";
     else if (typeof object === "string") return '"' + object + '"';
     else {
-      try { return JSON.stringify(object); }
+      try { return JSON.stringify(object, undefined, 2); } // Pretty-prints with indentation.
       catch (exception) {
         // object might not be stringifiable (e.g. DOM nodes), or JSON.stringify may not exist.
         return object.toString();
