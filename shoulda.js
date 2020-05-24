@@ -1,8 +1,9 @@
 /*
- * A unit testing framework which provides a DSL for grouping tests together into "contexts", which can
- * optionally share common setup blocks. This framework also supports stubbing out properties and methods of
- * objects. It's inspired by the Ruby Shoulda library.
- * Author: Phil Crosby
+ * A unit testing framework to group tests into "contexts", each of which can optionally share common setup
+ * blocks. This framework also supports stubbing out properties and methods of objects. See
+ * https://github.com/philc/shoulda.js
+ *
+ * Version: 1.0
  *
  * To write your tests, use this format:
 
