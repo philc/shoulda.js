@@ -32,7 +32,9 @@
  * Calling Tests.run() with a String argument will only run the subset of your tests which match the argument.
  */
 
-let scope = (typeof window === "undefined") ? global : window;
+// let scope = (typeof window === "undefined") ? global : window;
+
+let scope = {};
 
 /*
  * Assertions.
@@ -109,7 +111,7 @@ scope.ensureCalled = function(toExecute) {
   return wrappedFunction;
 };
 
-scope.AssertionError = function(message) {
+const AssertionError = function(message) {
   this.name = AssertionError;
   this.message = message;
 };
@@ -121,7 +123,7 @@ AssertionError.prototype.constructor = AssertionError;
  * A Context is a named set of test methods and nested contexts, with optional setup and tearDown blocks.
  * - contents: an array which can include a setup and tearDown method, test methods, and nested contexts.
  */
-scope.Context = function(name, contents) {
+const Context = function(name, contents) {
   Context.nextId = Context.nextId || 0;
   this.id = Context.nextId;
   Context.nextId++;
@@ -155,13 +157,13 @@ scope.context = function() {
 };
 
 scope.setup = function() { return new SetupMethod(arguments[0]); };
-scope.SetupMethod = function(methodBody) { this.methodBody = methodBody; };
+const SetupMethod = function(methodBody) { this.methodBody = methodBody; };
 
 scope.tearDown = function() { return new TearDownMethod(arguments[0]); };
-scope.TearDownMethod = function(methodBody) { this.methodBody = methodBody; };
+const TearDownMethod = function(methodBody) { this.methodBody = methodBody; };
 
 scope.should = function(name, methodBody) { return new TestMethod(name, methodBody); };
-scope.TestMethod = function(name, methodBody) {
+const TestMethod = function(name, methodBody) {
   this.name = name;
   this.methodBody = methodBody;
 };
@@ -169,7 +171,7 @@ scope.TestMethod = function(name, methodBody) {
 /*
  * Tests is used to run tests and keep track of the success and failure counts.
  */
-scope.Tests = {
+const Tests = {
   testContexts: [],
   completedContexts: [],
   testsRun: 0,
@@ -294,10 +296,11 @@ scope.Tests = {
   }
 };
 
+scope.Tests = Tests;
+
 /*
  * Stubs
  */
-
 scope.stub = function(object, propertyName, returnValue) {
   Stubs.stubbedObjects.push( { object:object, propertyName: propertyName, original: object[propertyName] });
   object[propertyName] = returnValue;
@@ -321,3 +324,15 @@ Stubs = {
     }
   }
 };
+
+// We support two module systems: CommonJS (NodeJS) and ECMAScript (browsers, Deno).
+const commonJS = typeof("module") != "undefined" && module.exports != null;
+
+if (commonJS) {
+  console.log("Exporting module");
+  // TODO(philc): change to exports
+  module.exports = scope;
+} else {
+  // Assume ECMAScript modules.
+  // TODO(philc): Implement
+}
