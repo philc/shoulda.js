@@ -32,8 +32,6 @@
  * Calling Tests.run() with a String argument will only run the subset of your tests which match the argument.
  */
 
-// let scope = (typeof window === "undefined") ? global : window;
-
 let scope = {};
 
 /*
@@ -101,9 +99,9 @@ scope.assert = {
  */
 scope.ensureCalled = function(toExecute) {
   const wrappedFunction = function() {
-    var index = Tests.requiredCallbacks.indexOf(wrappedFunction);
-    if (index >= 0)
-      Tests.requiredCallbacks.splice(index, 1);
+    const i = Tests.requiredCallbacks.indexOf(wrappedFunction);
+    if (i >= 0)
+      Tests.requiredCallbacks.splice(i, 1); // Delete.
     if (toExecute)
       return toExecute.apply(null, arguments);
   };
@@ -123,8 +121,9 @@ AssertionError.prototype.constructor = AssertionError;
  * A Context is a named set of test methods and nested contexts, with optional setup and tearDown blocks.
  * - contents: an array which can include a setup and tearDown method, test methods, and nested contexts.
  */
-const Context = function(name, contents) {
+const Context = function(name) {
   Context.nextId = Context.nextId || 0;
+  // TODO(philc): Do I need this?
   this.id = Context.nextId;
   Context.nextId++;
 
@@ -132,37 +131,43 @@ const Context = function(name, contents) {
   this.setupMethod = null;
   this.tearDownMethod = null;
   this.contexts = [];
+  this.tests = [];
   this.testMethods = [];
-
-  for (let i = 0; i < contents.length; i++) {
-    const testMethod = contents[i];
-    if (testMethod instanceof SetupMethod)
-      this.setupMethod = testMethod;
-    else if (testMethod instanceof TearDownMethod)
-      this.tearDownMethod = testMethod;
-    else if (testMethod instanceof Context)
-      this.contexts.push(testMethod);
-    else
-      this.testMethods.push(testMethod);
-  }
 };
+
+const contextStack = [];
 
 /*
  * See the usage documentation for details on how to use the "context" and "should" functions.
  */
-scope.context = function() {
-  const newContext = new Context(arguments[0], Array.prototype.slice.call(arguments, 1));
-  Tests.testContexts.push(newContext);
-  return newContext;
+scope.context = function(name, f) {
+  if (!f) // TODO(philc): typeof
+    throw("context() requires a function argument.");
+  const newContext = new Context(name);
+  if (contextStack.length > 0)
+    contextStack[contextStack.length - 1].tests.push(newContext);
+  else
+    Tests.topLevelContexts.push(newContext);
+  contextStack.push(newContext);
+  f();
+  contextStack.pop();
 };
 
-scope.setup = function() { return new SetupMethod(arguments[0]); };
+// TODO(philc): Remove these wrapper objects and just use the functions directly, and set properties on the
+// functions. At least for setup and teardown, since they don't have names.
+scope.setup = function() {
+  contextStack[contextStack.length - 1].setupMethod = new SetupMethod(arguments[0]);
+};
 const SetupMethod = function(methodBody) { this.methodBody = methodBody; };
 
-scope.tearDown = function() { return new TearDownMethod(arguments[0]); };
+scope.tearDown = function() {
+  contextStack[contextStack.length - 1].tearDownMethod = new TearDownMethod(arguments[0]);
+};
 const TearDownMethod = function(methodBody) { this.methodBody = methodBody; };
 
-scope.should = function(name, methodBody) { return new TestMethod(name, methodBody); };
+scope.should = function(name, methodBody) {
+  contextStack[contextStack.length - 1].tests.push(new TestMethod(name, methodBody));
+};
 const TestMethod = function(name, methodBody) {
   this.name = name;
   this.methodBody = methodBody;
@@ -172,8 +177,7 @@ const TestMethod = function(name, methodBody) {
  * Tests is used to run tests and keep track of the success and failure counts.
  */
 const Tests = {
-  testContexts: [],
-  completedContexts: [],
+  topLevelContexts: [],
   testsRun: 0,
   testsFailed: 0,
   // This will be set to "console.log" when running in a browser, and "print" in Rhino or V8. Feel free
@@ -195,7 +199,7 @@ const Tests = {
       if (isShell)
         Tests.outputMethod = print;
       else if (typeof(console) != "undefined") // Available in browsers.
-        Tests.outputMethod = function() { console.log.apply(console, arguments); };
+        Tests.outputMethod = console.log;
       else
         Tests.outputMethod = print; // print is available in all command-line shells.
     }
@@ -206,12 +210,8 @@ const Tests = {
     // must themselves be top level contexts.
     Tests.testsRun = 0;
     Tests.testsFailed = 0;
-    for (let i = Tests.testContexts.length - 1; i >= 0; i--) {
-      const context = Tests.testContexts[i];
-      const isTopLevelContext = !Tests.completedContexts[context.id];
-      if (isTopLevelContext)
-        Tests.runContext(context, [], testNameFilter);
-    }
+    for (let context of Tests.topLevelContexts)
+      Tests.runContext(context, [], testNameFilter);
     Tests.printTestSummary();
   },
 
@@ -219,13 +219,15 @@ const Tests = {
    * Run a context. This runs the test methods defined in the context first, and then any nested contexts.
    */
   runContext: function(context, parentContexts, testNameFilter) {
-    Tests.completedContexts[context.id] = true;
-    const testMethods = context.testMethods;
+    // Tests.completedContexts[context.id] = true;
+    const testMethods = context.tests;
     parentContexts = parentContexts.concat([context]);
-    for (let i = 0; i < context.testMethods.length; i++)
-      Tests.runTest(context.testMethods[i], parentContexts, testNameFilter);
-    for (let i = 0; i < context.contexts.length; i++)
-      Tests.runContext(context.contexts[i], parentContexts, testNameFilter);
+    for (let test of context.tests) {
+      if (test instanceof TestMethod)
+        Tests.runTest(test, parentContexts, testNameFilter);
+      else
+        Tests.runContext(test, parentContexts, testNameFilter);
+    }
   },
 
   /*
@@ -236,7 +238,7 @@ const Tests = {
    */
   runTest: function(testMethod, contexts, testNameFilter) {
     const fullTestName = Tests.fullyQualifiedName(testMethod.name, contexts);
-    if (testNameFilter && fullTestName.indexOf(testNameFilter) == -1)
+    if (testNameFilter && !fullTestName.includes(testNameFilter))
       return;
 
     Tests.testsRun++;
@@ -246,17 +248,15 @@ const Tests = {
 
     try {
       try {
-        for (let i = 0; i < contexts.length; i++) {
-          if (contexts[i].setupMethod)
-            contexts[i].setupMethod.methodBody.apply(testScope);
-        }
-        testMethod.methodBody.apply(testScope);
+        for (const context of contexts)
+          if (context.setupMethod)
+            context.setupMethod.methodBody.call(testScope, testScope);
+        testMethod.methodBody.call(testScope, testScope);
       }
       finally {
-        for (let i = 0; i < contexts.length; i++) {
-          if (contexts[i].tearDownMethod)
-            contexts[i].tearDownMethod.methodBody.apply(testScope);
-        }
+        for (const context of contexts)
+          if (context.tearDownMethod)
+            context.tearDownMethod.methodBody.call(testScope, testScope);
       }
     } catch(exception) {
       failureMessage = exception.message;
@@ -277,10 +277,7 @@ const Tests = {
 
   /* The fully-qualified name of the test or context, e.g. "context1: context2: testName". */
   fullyQualifiedName: function(testName, contexts) {
-    const contextNames = [];
-    for (let i = 0; i < contexts.length; i++)
-      contextNames.push(contexts[i].name);
-    return contextNames.concat(testName).join(": ");
+    return contexts.map((c) => c.name).concat(testName).join(": ");
   },
 
   printTestSummary: function() {
@@ -291,7 +288,6 @@ const Tests = {
   },
 
   printFailure: function(testName, failureMessage) {
-    // TODO(philc): We should consider other output formats, like HTML.
     this.outputMethod(`Fail "${testName}"`, failureMessage);
   }
 };
@@ -330,7 +326,6 @@ const commonJS = typeof("module") != "undefined" && module.exports != null;
 
 if (commonJS) {
   console.log("Exporting module");
-  // TODO(philc): change to exports
   module.exports = scope;
 } else {
   // Assume ECMAScript modules.
