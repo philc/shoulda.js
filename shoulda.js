@@ -191,7 +191,7 @@ const Tests = {
   run: function(testNameFilter) {
     // Pick an output method based on whether we're running in a browser or via a command-line js shell.
     if (!Tests.outputMethod) {
-      const isShell = (typeof(Envjs) !== "undefined") || (typeof("window") === "undefined");
+      const isShell = typeof("window") === "undefined";
       if (isShell)
         Tests.outputMethod = print;
       else if (typeof(console) != "undefined") // Available in browsers.
