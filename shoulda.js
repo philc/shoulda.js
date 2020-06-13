@@ -1,6 +1,6 @@
 /*
  * A unit testing framework to group tests into "contexts", each of which can optionally share common setup
- * blocks. This framework also supports stubbing out properties and methods of objects. See
+ * functions. This framework also supports stubbing out properties and methods of objects. See
  * https://github.com/philc/shoulda.js
  *
  * Version: 2.0 (WIP)
@@ -122,11 +122,6 @@ AssertionError.prototype.constructor = AssertionError;
  * - contents: an array which can include a setup and tearDown method, test methods, and nested contexts.
  */
 const Context = function(name) {
-  Context.nextId = Context.nextId || 0;
-  // TODO(philc): Do I need this?
-  this.id = Context.nextId;
-  Context.nextId++;
-
   this.name = name;
   this.setupMethod = null;
   this.tearDownMethod = null;
@@ -140,8 +135,8 @@ const contextStack = [];
 /*
  * See the usage documentation for details on how to use the "context" and "should" functions.
  */
-scope.context = function(name, f) {
-  if (!f) // TODO(philc): typeof
+scope.context = function(name, fn) {
+  if (typeof(fn) != "function")
     throw("context() requires a function argument.");
   const newContext = new Context(name);
   if (contextStack.length > 0)
@@ -149,28 +144,17 @@ scope.context = function(name, f) {
   else
     Tests.topLevelContexts.push(newContext);
   contextStack.push(newContext);
-  f();
+  fn();
   contextStack.pop();
 };
 
-// TODO(philc): Remove these wrapper objects and just use the functions directly, and set properties on the
-// functions. At least for setup and teardown, since they don't have names.
-scope.setup = function() {
-  contextStack[contextStack.length - 1].setupMethod = new SetupMethod(arguments[0]);
-};
-const SetupMethod = function(methodBody) { this.methodBody = methodBody; };
+scope.setup = (fn) => contextStack[contextStack.length - 1].setupMethod = fn;
 
-scope.tearDown = function() {
-  contextStack[contextStack.length - 1].tearDownMethod = new TearDownMethod(arguments[0]);
-};
-const TearDownMethod = function(methodBody) { this.methodBody = methodBody; };
+scope.tearDown = (fn) => contextStack[contextStack.length - 1].tearDownMethod = fn;
 
-scope.should = function(name, methodBody) {
-  contextStack[contextStack.length - 1].tests.push(new TestMethod(name, methodBody));
-};
-const TestMethod = function(name, methodBody) {
-  this.name = name;
-  this.methodBody = methodBody;
+scope.should = (name, fn) => {
+  fn.name = name;
+  contextStack[contextStack.length - 1].tests.push(fn);
 };
 
 /*
@@ -219,14 +203,13 @@ const Tests = {
    * Run a context. This runs the test methods defined in the context first, and then any nested contexts.
    */
   runContext: function(context, parentContexts, testNameFilter) {
-    // Tests.completedContexts[context.id] = true;
     const testMethods = context.tests;
     parentContexts = parentContexts.concat([context]);
     for (let test of context.tests) {
-      if (test instanceof TestMethod)
-        Tests.runTest(test, parentContexts, testNameFilter);
-      else
+      if (test instanceof Context)
         Tests.runContext(test, parentContexts, testNameFilter);
+      else
+        Tests.runTest(test, parentContexts, testNameFilter);
     }
   },
 
@@ -250,13 +233,13 @@ const Tests = {
       try {
         for (const context of contexts)
           if (context.setupMethod)
-            context.setupMethod.methodBody.call(testScope, testScope);
-        testMethod.methodBody.call(testScope, testScope);
+            context.setupMethod.call(testScope, testScope);
+        testMethod.call(testScope, testScope);
       }
       finally {
         for (const context of contexts)
           if (context.tearDownMethod)
-            context.tearDownMethod.methodBody.call(testScope, testScope);
+            context.tearDownMethod.call(testScope, testScope);
       }
     } catch(exception) {
       failureMessage = exception.message;
@@ -298,7 +281,7 @@ scope.Tests = Tests;
  * Stubs
  */
 scope.stub = function(object, propertyName, returnValue) {
-  Stubs.stubbedObjects.push( { object:object, propertyName: propertyName, original: object[propertyName] });
+  Stubs.stubbedObjects.push({ object: object, propertyName: propertyName, original: object[propertyName] });
   object[propertyName] = returnValue;
 };
 
@@ -315,7 +298,7 @@ Stubs = {
   clearStubs: function() {
     // Restore stubs in the reverse order they were defined in, in case the same property was stubbed twice.
     for (let i = Stubs.stubbedObjects.length - 1; i >= 0; i--) {
-      var stubProperties = Stubs.stubbedObjects[i];
+      const stubProperties = Stubs.stubbedObjects[i];
       stubProperties.object[stubProperties.propertyName] = stubProperties.original;
     }
   }
