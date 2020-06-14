@@ -135,7 +135,7 @@ const contextStack = [];
 /*
  * See the usage documentation for details on how to use the "context" and "should" functions.
  */
-scope.context = function(name, fn) {
+scope.context = (name, fn) => {
   if (typeof(fn) != "function")
     throw("context() requires a function argument.");
   const newContext = new Context(name);
@@ -146,16 +146,30 @@ scope.context = function(name, fn) {
   contextStack.push(newContext);
   fn();
   contextStack.pop();
+  return newContext;
 };
+
+scope.context.only = (name, fn) => {
+  const context = scope.context(name, fn);
+  context.isFocused = true;
+  Tests.focusIsUsed = true;
+}
 
 scope.setup = (fn) => contextStack[contextStack.length - 1].setupMethod = fn;
 
 scope.tearDown = (fn) => contextStack[contextStack.length - 1].tearDownMethod = fn;
 
 scope.should = (name, fn) => {
-  fn.name = name;
-  contextStack[contextStack.length - 1].tests.push(fn);
+  const test = {name, fn};
+  contextStack[contextStack.length - 1].tests.push(test);
+  return test;
 };
+
+scope.should.only = (name, fn) => {
+  const test = scope.should(name, fn);
+  test.isFocused = true;
+  Tests.focusIsUsed = true;
+}
 
 /*
  * Tests is used to run tests and keep track of the success and failure counts.
@@ -171,6 +185,9 @@ const Tests = {
   // The list of callbacks that the developer wants to ensure are called by the end of the test.
   // This is manipulated by the ensureCalled() function.
   requiredCallbacks: [],
+
+  // True if, during the collection phase, should.only or context.only was used.
+  focusIsUsed: false,
 
   /*
    * Run all contexts which have been defined.
@@ -216,11 +233,13 @@ const Tests = {
 
   /*
    * Run a test method. This will run all setup methods in all contexts, and then all teardown methods.
-   * - testMethod: the function to execute.
+   * - testMethod: an object with keys name, fn.
    * - contexts: an array of contexts, ordered outer to inner.
    * - testNameFilter: A String. If provided, only run the test if it matches the testNameFilter.
    */
   runTest: function(testMethod, contexts, testNameFilter) {
+    if (Tests.focusIsUsed && !testMethod.isFocused && !contexts.some((c) => c.isFocused))
+      return;
     const fullTestName = Tests.fullyQualifiedName(testMethod.name, contexts);
     if (testNameFilter && !fullTestName.includes(testNameFilter))
       return;
@@ -235,7 +254,7 @@ const Tests = {
         for (const context of contexts)
           if (context.setupMethod)
             context.setupMethod.call(testScope, testScope);
-        testMethod.call(testScope, testScope);
+        testMethod.fn.call(testScope, testScope);
       }
       finally {
         for (const context of contexts)
