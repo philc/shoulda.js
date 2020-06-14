@@ -197,6 +197,7 @@ const Tests = {
     for (let context of Tests.topLevelContexts)
       Tests.runContext(context, [], testNameFilter);
     Tests.printTestSummary();
+    return Tests.testsFailed == 0;
   },
 
   /*
