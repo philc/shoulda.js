@@ -1,7 +1,12 @@
 const shoulda = require("./shoulda.js");
 const {should, context, assert, setup, tearDown, ensureCalled, stub, Tests} = shoulda;
 
-shoulda.Tests.topLevelContexts = [];
+const resetState = () => {
+  shoulda.Tests.topLevelContexts = [];
+  shoulda.Tests.focusedTests = [];
+  shoulda.Tests.focusIsUsed = false;
+};
+resetState();
 
 const order = [];
 context("fixture: evaluation order", () => {
@@ -45,6 +50,29 @@ context("stubs", () => {
     assert.equal(1, StubFixture.a);
     stub(StubFixture, "a", 2);
     assert.equal(2, StubFixture.a);
+  });
+});
+
+if (!shoulda.Tests.run())
+  return;
+resetState();
+
+const testsRan = [];
+context("skipping tests", () => {
+  should.only("run A", () => testsRan.push("A"));
+  context.only("run this whole context", () => {
+    should("run B", () => testsRan.push("B"));
+  });
+  should("not run C", () => testsRan.push("C"));
+  should.only("run D", () => testsRan.push("D"));
+});
+
+shoulda.Tests.run();
+resetState();
+
+context("skipping tests", () => {
+  should("have only run tests marked as only", () => {
+    assert.equal(["A", "B", "D"], testsRan);
   });
 });
 
