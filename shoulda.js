@@ -218,6 +218,17 @@ const Tests = {
   },
 
   /*
+   * This resets (clears) the state of shoulda, including the tests which have been defined. This is useful
+   * when running shoulda tests in a REPL environment, to prevent tests from getting defined multiple times
+   * when a file is re-evaluated.
+   */
+  reset: function() {
+    this.topLevelContexts = [];
+    this.focusedTests = [];
+    this.focusIsUsed = false;
+  },
+
+  /*
    * Run a context. This runs the test methods defined in the context first, and then any nested contexts.
    */
   runContext: function(context, parentContexts, testNameFilter) {
