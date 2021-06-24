@@ -51,6 +51,16 @@ Tips
 
 - You can customize how test status is reported by replacing the Tests.outputMethod property with your own function. By default, shoulda.js will use console.log in a browser and the global print() function in command line JavaScript shells like V8.
 
+Changelog
+---------
+
+* v2.0 (work in progress)
+  * Update the test syntax to use closures rather than arrays. This allows for more flexibility, is easier for
+    code editors to indent, and matches the syntax used by most JS testing libraries.
+  * In test failure output, print complex objects on separate lines to improve readability.
+  * Add "should.only" and "context.only" for programmatically limiting which tests will be run.
+* v1.0 (2013-03-02)
+
 Contributing
 ------------
 Contributors are welcome! Feel free to ping me with ideas for enhancements.
