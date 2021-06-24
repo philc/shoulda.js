@@ -1,35 +1,39 @@
 Shoulda.js
-=========
+==========
 Shoulda.js is a micro JavaScript unit testing framework. It gives you a tight syntax for writing terse,
 readable unit tests. It weighs in at under 350 lines and makes no assumptions about
 your JavaScript environment or libraries.
 
 Example usage
 -------------
-Shoulda.js provides a DSL for you to grouping tests into logical units called "contexts". Contexts can
-optionally share test-case setup code:
+In Shoulda.js, tests are grouped into related units called "contexts". Contexts can optionally share setup
+code which is common to all tests within that context:
 
-    context("super mario",
-      setup(function() {
+    context("super mario", () => {
+      let game;
+
+      setup(() => {
         game = new SuperMarioGame();
-      }),
+      });
 
-      context("enemy interaction",
-        setup(function() {
+      context("enemy interaction", () => {
+        let turtle;
+
+        setup(() => {
           turtle = game.addTurtleEnemy({ x: 10, y: 0 });
-        }),
+        });
 
-        should("kill the turtle after jumping on it", function() {
+        should("kill the turtle after jumping on it", () => {
           game.mario.jump({ x: 10, y: 0 });
           assert.equal("dead", turtle.state);
-        }),
+        });
 
-        should("end the game if mario walks into an enemy turtle", function() {
+        should("end the game if mario walks into an enemy turtle", () => {
           game.mario.move({ x: 10, y: 0 });
           assert.equal("gameOver", game.state);
-        })
-      )
-    );
+        });
+      });
+    });
 
     Tests.run();
 
@@ -37,24 +41,20 @@ That's it. To see the other available assertions, just glance through the source
 
 Stubs
 -----
-Stubbing means to replace methods that you want to control for the duration of your test. You'll often want to
-stub out expensive methods like talking to the network, or methods which would make your test easier to write.
-Shoulda provides a simple way to stub out properties and methods:
+Stubbing means to temporarily redefine functions on objects for the duration of your test. This is commonly
+used to do things like replace a network call, and hard-code its return value. Here's the syntax:
 
-    stub(document, "getElementById", function(id) { assert.equal(id, "marioCharacter"); });
+    stub(document, "getElementById", (id) => assert.equal(id, "marioCharacter"))
     or
     stub(document, "getElementById", returns(myElement));
 
 Tips
 ----
-- Calling Tests.run() with a String argument will only run a subset of your tests, e.g. Tests.run("kill the turtle")
+- Calling `Tests.run()` with a String argument will only run a subset of your tests, e.g. `Tests.run("kill the
+  turtle")`
 
-- [Chrome's v8 JavaScript engine](http://code.google.com/apis/v8/intro.html) is a JavaScript interpreter that
-  you can use to script and run your unit tests from the command line, outside of the browser.
-
-- [envjs](http://www.envjs.com/) is a set of JavaScript files which provide a simulated browser environment.
-  You can use envjs to run JavaScript tests at the webpage level with DOM interaction, but without having to
-  launch an actual browser.
+- Alternatively, you can use `should.only` or `context.only` when defining a test to run; when one or more
+  tests are defined using `should.only`, only those tests will be run when `Tests.run()` is called.
 
 - You can customize how test status is reported by replacing the Tests.outputMethod property with your own
   function. By default, shoulda.js will use console.log in a browser and the global print() function in
@@ -68,13 +68,6 @@ Changelog
   * In test failure output, print complex objects on separate lines to improve readability.
   * Add "should.only" and "context.only" for programmatically limiting which tests will be run.
 * v1.0 (2013-03-02)
-
-Contributing
-------------
-Contributors are welcome! Feel free to ping me with ideas for enhancements.
-
-A short guide or tutorial on how to do command-line unit testing in JavaScript using shoulda.js would be great
-in helping folks get started.
 
 License
 -------
