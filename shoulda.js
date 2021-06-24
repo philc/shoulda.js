@@ -3,7 +3,7 @@
  * blocks. This framework also supports stubbing out properties and methods of objects. See
  * https://github.com/philc/shoulda.js
  *
- * Version: 1.0
+ * Version: 2.0 (WIP)
  *
  * To write your tests, use this format:
 
