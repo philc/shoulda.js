@@ -336,7 +336,7 @@ Stubs = {
 };
 
 // We support two module systems: CommonJS (NodeJS) and ECMAScript (browsers, Deno).
-const commonJS = typeof("module") != "undefined" && module.exports != null;
+const commonJS = typeof(module) != "undefined" && module.exports != null;
 
 if (commonJS) {
   console.log("Exporting module");
