@@ -32,12 +32,12 @@
  * Calling Tests.run() with a String argument will only run the subset of your tests which match the argument.
  */
 
-let scope = {};
+const shoulda = {};
 
 /*
  * Assertions.
  */
-scope.assert = {
+shoulda.assert = {
   isTrue: function(value) {
     if (!value)
       this.fail("Expected true, but got " + value);
@@ -97,7 +97,7 @@ scope.assert = {
  * ensureCalled takes a function and ensures that it gets called by the end of the test case. This is
  * useful when you add callbacks to an object you're testing and you want to make sure they get called.
  */
-scope.ensureCalled = function(toExecute) {
+shoulda.ensureCalled = function(toExecute) {
   const wrappedFunction = function() {
     const i = Tests.requiredCallbacks.indexOf(wrappedFunction);
     if (i >= 0)
@@ -135,7 +135,7 @@ const contextStack = [];
 /*
  * See the usage documentation for details on how to use the "context" and "should" functions.
  */
-scope.context = (name, fn) => {
+shoulda.context = (name, fn) => {
   if (typeof(fn) != "function")
     throw("context() requires a function argument.");
   const newContext = new Context(name);
@@ -149,24 +149,24 @@ scope.context = (name, fn) => {
   return newContext;
 };
 
-scope.context.only = (name, fn) => {
-  const context = scope.context(name, fn);
+shoulda.context.only = (name, fn) => {
+  const context = shoulda.context(name, fn);
   context.isFocused = true;
   Tests.focusIsUsed = true;
 }
 
-scope.setup = (fn) => contextStack[contextStack.length - 1].setupMethod = fn;
+shoulda.setup = (fn) => contextStack[contextStack.length - 1].setupMethod = fn;
 
-scope.tearDown = (fn) => contextStack[contextStack.length - 1].tearDownMethod = fn;
+shoulda.tearDown = (fn) => contextStack[contextStack.length - 1].tearDownMethod = fn;
 
-scope.should = (name, fn) => {
+shoulda.should = (name, fn) => {
   const test = {name, fn};
   contextStack[contextStack.length - 1].tests.push(test);
   return test;
 };
 
-scope.should.only = (name, fn) => {
-  const test = scope.should(name, fn);
+shoulda.should.only = (name, fn) => {
+  const test = shoulda.should(name, fn);
   test.isFocused = true;
   Tests.focusIsUsed = true;
 }
@@ -306,12 +306,12 @@ const Tests = {
   }
 };
 
-scope.Tests = Tests;
+shoulda.Tests = Tests;
 
 /*
  * Stubs
  */
-scope.stub = function(object, propertyName, returnValue) {
+shoulda.stub = function(object, propertyName, returnValue) {
   Stubs.stubbedObjects.push({ object: object, propertyName: propertyName, original: object[propertyName] });
   object[propertyName] = returnValue;
 };
@@ -321,7 +321,7 @@ scope.stub = function(object, propertyName, returnValue) {
  * want to hard code its return value, for example:
  * stubs(shoppingCart, "calculateTotal", returns(4.0))
  */
-scope.returns = function(value) { return function() { return value; } };
+shoulda.returns = function(value) { return function() { return value; } };
 
 Stubs = {
   stubbedObjects: [],
@@ -339,9 +339,9 @@ Stubs = {
 const commonJS = typeof(module) != "undefined" && module.exports != null;
 
 if (commonJS) {
-  console.log("Exporting module");
-  module.exports = scope;
+  module.exports = shoulda;
 } else {
   // Assume ECMAScript modules.
-  // TODO(philc): Implement
+  // TODO(philc): This needs to be implemented properly.
+  window.shoulda = shoulda;
 }
