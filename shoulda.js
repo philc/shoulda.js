@@ -311,6 +311,16 @@ const run = async function(testNameFilter) { return Tests.run(testNameFilter); }
 const reset = async function() { return Tests.reset(); }
 
 /*
+ * Stats of the latest test run.
+ */
+const getStats = () => {
+  return {
+    failed: Tests.testsFailed,
+    run: Tests.testsRun
+  };
+};
+
+/*
  * Stubs
  */
 const stub = function(object, propertyName, returnValue) {
@@ -340,4 +350,4 @@ const Stubs = {
 // It's not possible to support CommonJS modules (NodeJS's default module syntax) and ECMAScript modules (the
 // default for Deno, and browsers) in the same file, so we're going with the ECMAScript module syntax, since
 // NodeJS can that as well.
-export {assert, context, ensureCalled, reset, run, setup, should, stub, tearDown};
+export {assert, context, ensureCalled, getStats, reset, returns, run, setup, should, stub, tearDown};
