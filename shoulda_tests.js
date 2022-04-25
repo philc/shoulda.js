@@ -1,7 +1,7 @@
 import * as shoulda from "./shoulda.js";
-const {should, context, assert, setup, tearDown, ensureCalled, stub, Tests} = shoulda;
+const {assert, context, setup, should, tearDown} = shoulda;
 
-shoulda.Tests.reset();
+shoulda.reset();
 
 const order = [];
 context("fixture: evaluation order", () => {
@@ -34,7 +34,7 @@ context("state is passed to tests", () => {
 
 context("ensureCalled", () => {
   should("not fail if called", (t) => {
-    const f = ensureCalled();
+    const f = shoulda.ensureCalled();
     f();
   });
 });
@@ -43,14 +43,14 @@ const StubFixture = {a: 1};
 context("stubs", () => {
   should("stub out properties of objects", () => {
     assert.equal(1, StubFixture.a);
-    stub(StubFixture, "a", 2);
+    shoulda.stub(StubFixture, "a", 2);
     assert.equal(2, StubFixture.a);
   });
 });
 
-if (await !shoulda.Tests.run())
+if (await !shoulda.run())
   throw new Exception("First group of tests failed.");
-shoulda.Tests.reset();
+shoulda.reset();
 
 const testsRan = [];
 context("skipping tests", () => {
@@ -62,8 +62,8 @@ context("skipping tests", () => {
   should.only("run D", () => testsRan.push("D"));
 });
 
-await shoulda.Tests.run();
-Tests.reset();
+await shoulda.run();
+shoulda.reset();
 
 context("skipping tests", () => {
   should("have only run tests marked as only", () => {
@@ -71,4 +71,4 @@ context("skipping tests", () => {
   });
 });
 
-await shoulda.Tests.run();
+await shoulda.run();

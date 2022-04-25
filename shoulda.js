@@ -7,29 +7,32 @@
  *
  * To write your tests, use this format:
 
-   context("Chessboard",
-     setup(function() { ... }),
+   import * as shoulda from "shoulda.js";
+   const {assert, context, setup, should, tearDown} = shoulda;
 
-     should("Initialize itself", function() { ... }),
+   context("Chessboard",
+     setup(() => { ... }),
+
+     should("Initialize itself", () => { ... }),
 
      context("Chess piece",
-       setup: function() { ... },
-       should("Only allow valid moves", function() { ... })
+       setup: () => { ... },
+       should("Only allow valid moves", () => { ... })
      )
    );
 
  * To stub properties of an object:
 
    // Stub a method
-   stub(document, "getElementById", function() { ... });
-   stub(document, "getElementById", returns(myElement));
+   shoulda.stub(document, "getElementById", () => { ... });
+   shoulda.stub(document, "getElementById", returns(myElement));
 
    // Stub a property
-   stubs(window.location, "href", "http://myurl.com");
+   shoulda.stub(window.location, "href", "http://myurl.com");
 
  * To run your tests after you've defined them using contexts:
-   Tests.run()
- * Calling Tests.run() with a String argument will only run the subset of your tests which match the argument.
+   await shoulda.run()
+ * Calling shoulda.run() with a String argument will run the subset of the tests which match the argument.
  */
 
 /*
@@ -193,26 +196,26 @@ const Tests = {
    */
   run: async function(testNameFilter) {
     // Pick an output method based on whether we're running in a browser or via a command-line js shell.
-    if (!Tests.outputMethod) {
+    if (!this.outputMethod) {
       const isShell = typeof("window") === "undefined";
       if (isShell)
-        Tests.outputMethod = print;
+        this.outputMethod = print;
       else if (typeof(console) != "undefined") // Available in browsers.
-        Tests.outputMethod = console.log;
+        this.outputMethod = console.log;
       else
-        Tests.outputMethod = print; // print is available in all command-line shells.
+        this.outputMethod = print; // print is available in all command-line shells.
     }
 
     // Run all of the top level contexts (those not defined within another context) which will in turn run
     // any nested contexts. We know that the very last context ever added to Tests.testContexts is a top level
     // context. Also note that any contexts which have not already been run by a previous top level context
     // must themselves be top level contexts.
-    Tests.testsRun = 0;
-    Tests.testsFailed = 0;
-    for (let context of Tests.topLevelContexts)
-      await Tests.runContext(context, [], testNameFilter);
-    Tests.printTestSummary();
-    return Tests.testsFailed == 0;
+    this.testsRun = 0;
+    this.testsFailed = 0;
+    for (let context of this.topLevelContexts)
+      await this.runContext(context, [], testNameFilter);
+    this.printTestSummary();
+    return this.testsFailed == 0;
   },
 
   /*
@@ -234,9 +237,9 @@ const Tests = {
     parentContexts = parentContexts.concat([context]);
     for (let test of context.tests) {
       if (test instanceof Context)
-        await Tests.runContext(test, parentContexts, testNameFilter);
+        await this.runContext(test, parentContexts, testNameFilter);
       else
-        await Tests.runTest(test, parentContexts, testNameFilter);
+        await this.runTest(test, parentContexts, testNameFilter);
     }
   },
 
@@ -247,13 +250,13 @@ const Tests = {
    * - testNameFilter: A String. If provided, only run the test if it matches the testNameFilter.
    */
   runTest: async function(testMethod, contexts, testNameFilter) {
-    if (Tests.focusIsUsed && !testMethod.isFocused && !contexts.some((c) => c.isFocused))
+    if (this.focusIsUsed && !testMethod.isFocused && !contexts.some((c) => c.isFocused))
       return;
-    const fullTestName = Tests.fullyQualifiedName(testMethod.name, contexts);
+    const fullTestName = this.fullyQualifiedName(testMethod.name, contexts);
     if (testNameFilter && !fullTestName.includes(testNameFilter))
       return;
 
-    Tests.testsRun++;
+    this.testsRun++;
     let failureMessage = null;
     // This is the scope which all references to "this" in the setup and test methods will resolve to.
     const testScope = {};
@@ -276,14 +279,14 @@ const Tests = {
         failureMessage += ("\n" + exception.stack);
     }
 
-    if (!failureMessage && Tests.requiredCallbacks.length > 0)
+    if (!failureMessage && this.requiredCallbacks.length > 0)
       failureMessage = "A callback function should have been called during this test, but it wasn't.";
     if (failureMessage) {
       Tests.testsFailed++;
       Tests.printFailure(fullTestName, failureMessage);
     }
 
-    Tests.requiredCallbacks = [];
+    this.requiredCallbacks = [];
     Stubs.clearStubs();
   },
 
@@ -293,7 +296,7 @@ const Tests = {
   },
 
   printTestSummary: function() {
-    if (Tests.testsFailed > 0)
+    if (this.testsFailed > 0)
       this.outputMethod(`Fail (${Tests.testsFailed}/${Tests.testsRun})`);
     else
       this.outputMethod(`Pass (${Tests.testsRun}/${Tests.testsRun})`);
@@ -303,6 +306,9 @@ const Tests = {
     this.outputMethod(`Fail "${testName}"`, failureMessage);
   }
 };
+
+const run = async function(testNameFilter) { return Tests.run(testNameFilter); }
+const reset = async function() { return Tests.reset(); }
 
 /*
  * Stubs
@@ -334,4 +340,4 @@ const Stubs = {
 // It's not possible to support CommonJS modules (NodeJS's default module syntax) and ECMAScript modules (the
 // default for Deno, and browsers) in the same file, so we're going with the ECMAScript module syntax, since
 // NodeJS can that as well.
-export {assert, context, ensureCalled, setup, should, stub, tearDown, Tests};
+export {assert, context, ensureCalled, reset, run, setup, should, stub, tearDown};
