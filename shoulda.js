@@ -194,7 +194,7 @@ const Tests = {
    * Run all contexts which have been defined.
    * - testNameFilter: a String. If provided, only run tests which match testNameFilter will be run.
    */
-  run: function(testNameFilter) {
+  run: async function(testNameFilter) {
     // Pick an output method based on whether we're running in a browser or via a command-line js shell.
     if (!Tests.outputMethod) {
       const isShell = typeof("window") === "undefined";
@@ -213,7 +213,7 @@ const Tests = {
     Tests.testsRun = 0;
     Tests.testsFailed = 0;
     for (let context of Tests.topLevelContexts)
-      Tests.runContext(context, [], testNameFilter);
+      await Tests.runContext(context, [], testNameFilter);
     Tests.printTestSummary();
     return Tests.testsFailed == 0;
   },
@@ -232,14 +232,14 @@ const Tests = {
   /*
    * Run a context. This runs the test methods defined in the context first, and then any nested contexts.
    */
-  runContext: function(context, parentContexts, testNameFilter) {
+  runContext: async function(context, parentContexts, testNameFilter) {
     const testMethods = context.tests;
     parentContexts = parentContexts.concat([context]);
     for (let test of context.tests) {
       if (test instanceof Context)
-        Tests.runContext(test, parentContexts, testNameFilter);
+        await Tests.runContext(test, parentContexts, testNameFilter);
       else
-        Tests.runTest(test, parentContexts, testNameFilter);
+        await Tests.runTest(test, parentContexts, testNameFilter);
     }
   },
 
@@ -249,7 +249,7 @@ const Tests = {
    * - contexts: an array of contexts, ordered outer to inner.
    * - testNameFilter: A String. If provided, only run the test if it matches the testNameFilter.
    */
-  runTest: function(testMethod, contexts, testNameFilter) {
+  runTest: async function(testMethod, contexts, testNameFilter) {
     if (Tests.focusIsUsed && !testMethod.isFocused && !contexts.some((c) => c.isFocused))
       return;
     const fullTestName = Tests.fullyQualifiedName(testMethod.name, contexts);
@@ -265,13 +265,13 @@ const Tests = {
       try {
         for (const context of contexts)
           if (context.setupMethod)
-            context.setupMethod.call(testScope, testScope);
-        testMethod.fn.call(testScope, testScope);
+            await context.setupMethod.call(testScope, testScope);
+        await testMethod.fn.call(testScope, testScope);
       }
       finally {
         for (const context of contexts)
           if (context.tearDownMethod)
-            context.tearDownMethod.call(testScope, testScope);
+            await context.tearDownMethod.call(testScope, testScope);
       }
     } catch(exception) {
       failureMessage = exception.message;
