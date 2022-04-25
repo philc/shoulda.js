@@ -32,12 +32,13 @@
  * Calling Tests.run() with a String argument will only run the subset of your tests which match the argument.
  */
 
+// TODO(philc): Is this needed?
 const shoulda = {};
 
 /*
  * Assertions.
  */
-shoulda.assert = {
+const assert = shoulda.assert = {
   isTrue: function(value) {
     if (!value)
       this.fail("Expected true, but got " + value);
@@ -135,7 +136,7 @@ const contextStack = [];
 /*
  * See the usage documentation for details on how to use the "context" and "should" functions.
  */
-shoulda.context = (name, fn) => {
+const context = shoulda.context = (name, fn) => {
   if (typeof(fn) != "function")
     throw("context() requires a function argument.");
   const newContext = new Context(name);
@@ -159,7 +160,7 @@ shoulda.setup = (fn) => contextStack[contextStack.length - 1].setupMethod = fn;
 
 shoulda.tearDown = (fn) => contextStack[contextStack.length - 1].tearDownMethod = fn;
 
-shoulda.should = (name, fn) => {
+const should = shoulda.should = (name, fn) => {
   const test = {name, fn};
   contextStack[contextStack.length - 1].tests.push(test);
   return test;
@@ -311,7 +312,7 @@ shoulda.Tests = Tests;
 /*
  * Stubs
  */
-shoulda.stub = function(object, propertyName, returnValue) {
+const stub = shoulda.stub = function(object, propertyName, returnValue) {
   Stubs.stubbedObjects.push({ object: object, propertyName: propertyName, original: object[propertyName] });
   object[propertyName] = returnValue;
 };
@@ -323,7 +324,7 @@ shoulda.stub = function(object, propertyName, returnValue) {
  */
 shoulda.returns = function(value) { return function() { return value; } };
 
-Stubs = {
+let Stubs = {
   stubbedObjects: [],
 
   clearStubs: function() {
@@ -345,3 +346,5 @@ if (commonJS) {
   // TODO(philc): This needs to be implemented properly.
   window.shoulda = shoulda;
 }
+
+export {assert, context, should, stub, Tests};
