@@ -336,15 +336,7 @@ let Stubs = {
   }
 };
 
-// We support two module systems: CommonJS (NodeJS) and ECMAScript (browsers, Deno).
-const commonJS = typeof(module) != "undefined" && module.exports != null;
-
-if (commonJS) {
-  module.exports = shoulda;
-} else {
-  // Assume ECMAScript modules.
-  // TODO(philc): This needs to be implemented properly.
-  window.shoulda = shoulda;
-}
-
+// It's not possible to support CommonJS modules (NodeJS's default module syntax) and ECMAScript modules (the
+// default for Deno, and browsers) in the same file, so we're going with the ECMAScript module syntax, since
+// NodeJS can that as well.
 export {assert, context, ensureCalled, setup, should, stub, tearDown, Tests};
