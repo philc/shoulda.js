@@ -32,13 +32,10 @@
  * Calling Tests.run() with a String argument will only run the subset of your tests which match the argument.
  */
 
-// TODO(philc): Is this needed?
-const shoulda = {};
-
 /*
  * Assertions.
  */
-const assert = shoulda.assert = {
+const assert = {
   isTrue: function(value) {
     if (!value)
       this.fail("Expected true, but got " + value);
@@ -136,7 +133,7 @@ const contextStack = [];
 /*
  * See the usage documentation for details on how to use the "context" and "should" functions.
  */
-const context = shoulda.context = (name, fn) => {
+const context = (name, fn) => {
   if (typeof(fn) != "function")
     throw("context() requires a function argument.");
   const newContext = new Context(name);
@@ -150,9 +147,9 @@ const context = shoulda.context = (name, fn) => {
   return newContext;
 };
 
-shoulda.context.only = (name, fn) => {
-  const context = shoulda.context(name, fn);
-  context.isFocused = true;
+context.only = (name, fn) => {
+  const c = context(name, fn);
+  c.isFocused = true;
   Tests.focusIsUsed = true;
 }
 
@@ -160,14 +157,14 @@ const setup = (fn) => contextStack[contextStack.length - 1].setupMethod = fn;
 
 const tearDown = (fn) => contextStack[contextStack.length - 1].tearDownMethod = fn;
 
-const should = shoulda.should = (name, fn) => {
+const should = (name, fn) => {
   const test = {name, fn};
   contextStack[contextStack.length - 1].tests.push(test);
   return test;
 };
 
-shoulda.should.only = (name, fn) => {
-  const test = shoulda.should(name, fn);
+should.only = (name, fn) => {
+  const test = should(name, fn);
   test.isFocused = true;
   Tests.focusIsUsed = true;
 }
@@ -307,12 +304,10 @@ const Tests = {
   }
 };
 
-shoulda.Tests = Tests;
-
 /*
  * Stubs
  */
-const stub = shoulda.stub = function(object, propertyName, returnValue) {
+const stub = function(object, propertyName, returnValue) {
   Stubs.stubbedObjects.push({ object: object, propertyName: propertyName, original: object[propertyName] });
   object[propertyName] = returnValue;
 };
@@ -322,9 +317,9 @@ const stub = shoulda.stub = function(object, propertyName, returnValue) {
  * want to hard code its return value, for example:
  * stubs(shoppingCart, "calculateTotal", returns(4.0))
  */
-shoulda.returns = function(value) { return function() { return value; } };
+const returns = function(value) { return function() { return value; } };
 
-let Stubs = {
+const Stubs = {
   stubbedObjects: [],
 
   clearStubs: function() {
