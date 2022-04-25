@@ -1,7 +1,7 @@
-const shoulda = require("./shoulda.js");
+import * as shoulda from "./shoulda.js";
 const {should, context, assert, setup, tearDown, ensureCalled, stub, Tests} = shoulda;
 
-Tests.reset();
+shoulda.Tests.reset();
 
 const order = [];
 context("fixture: evaluation order", () => {
@@ -39,7 +39,7 @@ context("ensureCalled", () => {
   });
 });
 
-StubFixture = {a: 1};
+const StubFixture = {a: 1};
 context("stubs", () => {
   should("stub out properties of objects", () => {
     assert.equal(1, StubFixture.a);
@@ -48,9 +48,9 @@ context("stubs", () => {
   });
 });
 
-if (!shoulda.Tests.run())
-  return;
-Tests.reset();
+if (await !shoulda.Tests.run())
+  throw new Exception("First group of tests failed.");
+shoulda.Tests.reset();
 
 const testsRan = [];
 context("skipping tests", () => {
@@ -62,7 +62,7 @@ context("skipping tests", () => {
   should.only("run D", () => testsRan.push("D"));
 });
 
-shoulda.Tests.run();
+await shoulda.Tests.run();
 Tests.reset();
 
 context("skipping tests", () => {
@@ -71,4 +71,4 @@ context("skipping tests", () => {
   });
 });
 
-shoulda.Tests.run();
+await shoulda.Tests.run();

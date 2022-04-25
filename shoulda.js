@@ -98,7 +98,7 @@ const assert = shoulda.assert = {
  * ensureCalled takes a function and ensures that it gets called by the end of the test case. This is
  * useful when you add callbacks to an object you're testing and you want to make sure they get called.
  */
-shoulda.ensureCalled = function(toExecute) {
+const ensureCalled = function(toExecute) {
   const wrappedFunction = function() {
     const i = Tests.requiredCallbacks.indexOf(wrappedFunction);
     if (i >= 0)
@@ -156,9 +156,9 @@ shoulda.context.only = (name, fn) => {
   Tests.focusIsUsed = true;
 }
 
-shoulda.setup = (fn) => contextStack[contextStack.length - 1].setupMethod = fn;
+const setup = (fn) => contextStack[contextStack.length - 1].setupMethod = fn;
 
-shoulda.tearDown = (fn) => contextStack[contextStack.length - 1].tearDownMethod = fn;
+const tearDown = (fn) => contextStack[contextStack.length - 1].tearDownMethod = fn;
 
 const should = shoulda.should = (name, fn) => {
   const test = {name, fn};
@@ -347,4 +347,4 @@ if (commonJS) {
   window.shoulda = shoulda;
 }
 
-export {assert, context, should, stub, Tests};
+export {assert, context, ensureCalled, setup, should, stub, tearDown, Tests};
