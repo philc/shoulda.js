@@ -331,7 +331,7 @@ const stub = function(object, propertyName, returnValue) {
 /*
  * returns() is useful when you want to stub out a function (instead of a property) and you
  * want to hard code its return value, for example:
- * stubs(shoppingCart, "calculateTotal", returns(4.0))
+ * stub(shoppingCart, "calculateTotal", returns(4.0))
  */
 const returns = function(value) { return function() { return value; } };
 
