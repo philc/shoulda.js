@@ -48,8 +48,9 @@ context("stubs", () => {
   });
 });
 
-if (await !shoulda.run())
-  throw new Exception("First group of tests failed.");
+if (!(await shoulda.run())) {
+  throw new Error("First group of tests failed.");
+}
 shoulda.reset();
 
 const testsRan = [];
