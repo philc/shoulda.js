@@ -113,7 +113,7 @@ const assert = {
  * ensureCalled takes a function and ensures that it gets called by the end of the test case. This is
  * useful when you add callbacks to an object you're testing and you want to make sure they get called.
  */
-const ensureCalled = function (toExecute) {
+function ensureCalled(toExecute) {
   const wrappedFunction = function () {
     const i = Tests.requiredCallbacks.indexOf(wrappedFunction);
     if (i >= 0) {
@@ -125,12 +125,12 @@ const ensureCalled = function (toExecute) {
   };
   Tests.requiredCallbacks.push(wrappedFunction);
   return wrappedFunction;
-};
+}
 
-const AssertionError = function (message) {
+function AssertionError(message) {
   this.name = AssertionError;
   this.message = message;
-};
+}
 AssertionError.prototype = new Error();
 AssertionError.prototype.constructor = AssertionError;
 
@@ -138,22 +138,22 @@ AssertionError.prototype.constructor = AssertionError;
  * A Context is a named set of test methods and nested contexts, with optional setup and tearDown blocks.
  * - contents: an array which can include a setup and tearDown method, test methods, and nested contexts.
  */
-const Context = function (name) {
+function Context(name) {
   this.name = name;
   this.setupMethod = null;
   this.tearDownMethod = null;
   this.contexts = [];
   this.tests = [];
-};
+}
 
 const contextStack = [];
 
 /*
  * See the usage documentation for details on how to use the "context" and "should" functions.
  */
-const context = (name, fn) => {
+function context(name, fn) {
   if (typeof fn != "function") {
-    throw ("context() requires a function argument.");
+    throw "context() requires a function argument.";
   }
   const newContext = new Context(name);
   if (contextStack.length > 0) {
@@ -165,7 +165,7 @@ const context = (name, fn) => {
   fn();
   contextStack.pop();
   return newContext;
-};
+}
 
 context.only = (name, fn) => {
   const c = context(name, fn);
@@ -173,16 +173,19 @@ context.only = (name, fn) => {
   Tests.focusIsUsed = true;
 };
 
-const setup = (fn) => contextStack[contextStack.length - 1].setupMethod = fn;
+function setup(fn) {
+  contextStack[contextStack.length - 1].setupMethod = fn;
+}
 
-const tearDown = (fn) =>
+function tearDown(fn) {
   contextStack[contextStack.length - 1].tearDownMethod = fn;
+}
 
-const should = (name, fn) => {
+function should(name, fn) {
   const test = { name, fn };
   contextStack[contextStack.length - 1].tests.push(test);
   return test;
-};
+}
 
 should.only = (name, fn) => {
   const test = should(name, fn);
@@ -339,45 +342,46 @@ const Tests = {
   },
 };
 
-const run = function (testNameFilter) {
+function run(testNameFilter) {
   return Tests.run(testNameFilter);
-};
-const reset = function () {
-  return Tests.reset();
-};
+}
+
+function reset() {
+  Tests.reset();
+}
 
 /*
  * Stats of the latest test run.
  */
-const getStats = () => {
+function getStats() {
   return {
     failed: Tests.testsFailed,
     run: Tests.testsRun,
   };
-};
+}
 
 /*
  * Stubs
  */
-const stub = function (object, propertyName, returnValue) {
+function stub(object, propertyName, returnValue) {
   Stubs.stubbedObjects.push({
     object: object,
     propertyName: propertyName,
     original: object[propertyName],
   });
   object[propertyName] = returnValue;
-};
+}
 
 /*
  * returns() is useful when you want to stub out a function (instead of a property) and you
  * want to hard code its return value, for example:
  * stub(shoppingCart, "calculateTotal", returns(4.0))
  */
-const returns = function (value) {
+function returns(value) {
   return function () {
     return value;
   };
-};
+}
 
 const Stubs = {
   stubbedObjects: [],
