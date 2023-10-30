@@ -119,9 +119,7 @@ function ensureCalled(toExecute) {
     if (i >= 0) {
       Tests.requiredCallbacks.splice(i, 1); // Delete.
     }
-    if (toExecute) {
-      return toExecute.apply(null, arguments);
-    }
+    if (toExecute) return toExecute.apply(null, arguments);
   };
   Tests.requiredCallbacks.push(wrappedFunction);
   return wrappedFunction;
@@ -153,7 +151,7 @@ const contextStack = [];
  */
 function context(name, fn) {
   if (typeof fn != "function") {
-    throw "context() requires a function argument.";
+    throw new Error("context() requires a function argument.");
   }
   const newContext = new Context(name);
   if (contextStack.length > 0) {
@@ -304,10 +302,10 @@ const Tests = {
           }
         }
       }
-    } catch (exception) {
-      failureMessage = exception.message;
-      if (!(exception instanceof AssertionError) && exception.stack) {
-        failureMessage += "\n" + exception.stack;
+    } catch (error) {
+      failureMessage = error.message;
+      if (!(error instanceof AssertionError) && error.stack) {
+        failureMessage += "\n" + error.stack;
       }
     }
 
@@ -321,10 +319,10 @@ const Tests = {
     }
 
     this.requiredCallbacks = [];
-    Stubs.clearStubs();
+    clearStubs();
   },
 
-  /* The fully-qualified name of the test or context, e.g. "context1: context2: testName". */
+  // The fully-qualified name of the test or context, e.g. "context1: context2: testName".
   fullyQualifiedName: function (testName, contexts) {
     return contexts.map((c) => c.name).concat(testName).join(": ");
   },
@@ -363,8 +361,10 @@ function getStats() {
 /*
  * Stubs
  */
+const stubbedObjects = [];
+
 function stub(object, propertyName, returnValue) {
-  Stubs.stubbedObjects.push({
+  stubbedObjects.push({
     object: object,
     propertyName: propertyName,
     original: object[propertyName],
@@ -378,23 +378,17 @@ function stub(object, propertyName, returnValue) {
  * stub(shoppingCart, "calculateTotal", returns(4.0))
  */
 function returns(value) {
-  return function () {
-    return value;
-  };
+  return () => value;
 }
 
-const Stubs = {
-  stubbedObjects: [],
-
-  clearStubs: function () {
-    // Restore stubs in the reverse order they were defined in, in case the same property was stubbed twice.
-    for (let i = Stubs.stubbedObjects.length - 1; i >= 0; i--) {
-      const stubProperties = Stubs.stubbedObjects[i];
-      stubProperties.object[stubProperties.propertyName] =
-        stubProperties.original;
-    }
-  },
-};
+function clearStubs() {
+  // Restore stubs in the reverse order they were defined in, in case the same property was stubbed twice.
+  for (let i = stubbedObjects.length - 1; i >= 0; i--) {
+    const stubProperties = stubbedObjects[i];
+    stubProperties.object[stubProperties.propertyName] =
+      stubProperties.original;
+  }
+}
 
 // It's not possible to support CommonJS modules (NodeJS's default module syntax) and ECMAScript modules (the
 // default for Deno, and browsers) in the same file, so we're going with the ECMAScript module syntax, since
