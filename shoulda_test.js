@@ -45,6 +45,14 @@ context("ensureCalled", () => {
   });
 });
 
+context("throwsError", () => {
+  should("catch error and pass the test", (t) => {
+    assert.throwsError(() => {
+      throw new Error("This should be caught.");
+    }, "Error");
+  });
+});
+
 const StubFixture = { a: 1 };
 context("stubs", () => {
   should("stub out properties of objects", () => {

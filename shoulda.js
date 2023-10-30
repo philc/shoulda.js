@@ -64,27 +64,26 @@ const assert = {
   },
 
   // We cannot name this function simply "throws", because it's a reserved Javascript keyword.
-  throwsException: function (expression, expectedExceptionName) {
+  throwsError: function (expression, errorName) {
     try {
       expression();
-    } catch (exception) {
-      if (expectedExceptionName) {
-        if (exception.name === expectedExceptionName) return;
-        else {
+    } catch (error) {
+      if (errorName) {
+        if (error.name == errorName) {
+          return;
+        } else {
           assert.fail(
-            "Expected exception " + expectedExceptionName +
-              " to be thrown but exception " +
-              exception.name + " was thrown instead.",
+            `Expected error ${errorName} to be thrown but error ${error.name} was thrown instead.`,
           );
         }
-      } else return;
+      } else {
+        return;
+      }
     }
-    if (expectedExceptionName) {
-      assert.fail(
-        `Expected exception ${expectedExceptionName} but no exception was thrown.`,
-      );
+    if (errorName) {
+      assert.fail(`Expected error ${errorName} but no error was thrown.`);
     } else {
-      assert.fail("Expected exception but none was thrown.");
+      assert.fail("Expected error but none was thrown.");
     }
   },
 
