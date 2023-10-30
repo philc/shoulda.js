@@ -1,5 +1,5 @@
 import * as shoulda from "./shoulda.js";
-const {assert, context, setup, should, tearDown} = shoulda;
+const { assert, context, setup, should, tearDown } = shoulda;
 
 shoulda.reset();
 
@@ -16,9 +16,15 @@ context("fixture: evaluation order", () => {
 
 context("evaluation order", () => {
   should("execute the collection phase in the correct order", () => {
-    assert.equal(["outer-setup", "inner-setup", "should-1", "outer-teardown",
-                  "outer-setup", "should-2", "outer-teardown"],
-                 order);
+    assert.equal([
+      "outer-setup",
+      "inner-setup",
+      "should-1",
+      "outer-teardown",
+      "outer-setup",
+      "should-2",
+      "outer-teardown",
+    ], order);
   });
 });
 
@@ -39,7 +45,7 @@ context("ensureCalled", () => {
   });
 });
 
-const StubFixture = {a: 1};
+const StubFixture = { a: 1 };
 context("stubs", () => {
   should("stub out properties of objects", () => {
     assert.equal(1, StubFixture.a);
