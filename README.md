@@ -58,7 +58,7 @@ commonly used to do things like replace a network call and hard-code its return 
 is:
 
     const fakeElement = { id: "abc" };
-    // returns(v) creates a function which, when called, returns "v".
+    // returns(v) creates a function which, when called, returns `v`.
     shoulda.stub(document, "getElementById", returns(fakeElement));
 
 How to stub a property:
@@ -75,7 +75,7 @@ Tips
 
 Changelog
 ---------
-* v2.0 (work in progress)
+* v2.0 (2023-10-30)
   * Update the test syntax to use closures rather than arrays. This allows for more flexibility, is
     easier for code editors to indent, and matches the syntax used by most JS testing libraries.
   * In test failure output, print complex objects on separate lines to improve readability.
