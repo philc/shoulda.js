@@ -165,9 +165,6 @@ const Tests = {
   topLevelContexts: [],
   testsRun: 0,
   testsFailed: 0,
-  // This will be set to "console.log" when running in a browser, and "print" in Rhino or V8. Feel free
-  // to override this to be your own output function.
-  outputMethod: null,
 
   // The list of callbacks that the developer wants to ensure are called by the end of the test.
   // This is manipulated by the ensureCalled() function.
@@ -181,18 +178,6 @@ const Tests = {
    * - testNameFilter: a String. If provided, only run tests which match testNameFilter will be run.
    */
   run: async function (testNameFilter) {
-    // Pick an output method based on whether we're running in a browser or via a command-line js shell.
-    if (!this.outputMethod) {
-      const isShell = typeof ("window") === "undefined";
-      if (isShell) {
-        this.outputMethod = print;
-      } else if (typeof console != "undefined") { // Available in browsers.
-        this.outputMethod = console.log;
-      } else {
-        this.outputMethod = print; // print is available in all command-line shells.
-      }
-    }
-
     // Run all of the top level contexts (those not defined within another context) which will in turn run
     // any nested contexts. We know that the very last context ever added to Tests.testContexts is a top level
     // context. Also note that any contexts which have not already been run by a previous top level context
@@ -296,14 +281,14 @@ const Tests = {
 
   printTestSummary: function () {
     if (this.testsFailed > 0) {
-      this.outputMethod(`Fail (${Tests.testsFailed}/${Tests.testsRun})`);
+      console.log(`Fail (${Tests.testsFailed}/${Tests.testsRun})`);
     } else {
-      this.outputMethod(`Pass (${Tests.testsRun}/${Tests.testsRun})`);
+      console.log(`Pass (${Tests.testsRun}/${Tests.testsRun})`);
     }
   },
 
   printFailure: function (testName, failureMessage) {
-    this.outputMethod(`Fail "${testName}"`, failureMessage);
+    console.log(`Fail "${testName}"`, failureMessage);
   },
 };
 

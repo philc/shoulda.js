@@ -63,10 +63,6 @@ Tips
 * Alternatively, you can use `should.only` or `context.only` when defining a test. When one or more
   tests are defined using `should.only`, `shoula.run()` will run only those tests.
 
-* You can customize how test status is reported by replacing the Tests.outputMethod property with your own
-  function. By default, shoulda.js will use console.log in a browser and the global print() function in
-  command line JavaScript shells like V8.
-
 Changelog
 ---------
 * v2.0 (work in progress)
