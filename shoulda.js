@@ -1,38 +1,6 @@
 /*
- * A unit testing framework to group tests into "contexts", each of which can optionally share common setup
- * functions. This framework also supports stubbing out properties and methods of objects. See
- * https://github.com/philc/shoulda.js
- *
- * Version: 2.0 (WIP)
- *
- * To write your tests, use this format:
-
-   import * as shoulda from "shoulda.js";
-   const {assert, context, setup, should, teardown} = shoulda;
-
-   context("Chessboard",
-     setup(() => { ... }),
-
-     should("Initialize itself", () => { ... }),
-
-     context("Chess piece",
-       setup: () => { ... },
-       should("Only allow valid moves", () => { ... })
-     )
-   );
-
- * To stub properties of an object:
-
-   // Stub a method
-   shoulda.stub(document, "getElementById", () => { ... });
-   shoulda.stub(document, "getElementById", returns(myElement));
-
-   // Stub a property
-   shoulda.stub(window.location, "href", "http://myurl.com");
-
- * To run your tests after you've defined them using contexts:
-   await shoulda.run()
- * Calling shoulda.run() with a String argument will run the subset of the tests which match the argument.
+ * A micro framework for unit testing. Tests are grouped in "contexts", each of which can share
+ * common setup functions. See the README at https://github.com/philc/shoulda.js
  */
 
 /*
@@ -109,8 +77,8 @@ const assert = {
 };
 
 /*
- * ensureCalled takes a function and ensures that it gets called by the end of the test case. This is
- * useful when you add callbacks to an object you're testing and you want to make sure they get called.
+ * ensureCalled takes a function, and ensures that it gets called by the end of the test case. This
+ * is useful when testing APIs that use callbacks.
  */
 function ensureCalled(toExecute) {
   const wrappedFunction = function () {

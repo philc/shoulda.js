@@ -12,26 +12,26 @@ code which is common to all tests within that context:
     import * as shoulda from "shoulda.js";
     const {assert, context, setup, should, teardown} = shoulda;
 
-    context("super mario", () => {
+    context("Super mario", () => {
       let game;
 
       setup(() => {
-        game = new SuperMarioGame();
+        game = new MarioGame();
       });
 
       context("enemy interaction", () => {
-        let turtle;
+        let enemy;
 
         setup(() => {
-          turtle = game.addTurtleEnemy({ x: 10, y: 0 });
+          enemy = game.addEnemy({ x: 10, y: 0 });
         });
 
-        should("kill the turtle after jumping on it", () => {
+        should("kill the enemy after jumping on it", () => {
           game.mario.jump({ x: 10, y: 0 });
-          assert.equal("dead", turtle.state);
+          assert.equal("dead", enemy.state);
         });
 
-        should("end the game if mario walks into an enemy turtle", () => {
+        should("end the game if mario walks into an enemy", () => {
           game.mario.move({ x: 10, y: 0 });
           assert.equal("gameOver", game.state);
         });
@@ -45,21 +45,25 @@ That's it. To see the other available assertions, just glance through the source
 Stubs
 -----
 Stubbing means to temporarily redefine functions on objects for the duration of your test. This is commonly
-used to do things like replace a network call, and hard-code its return value. Here's the syntax:
+used to do things like replace a network call and hard-code its return value. Here's the syntax:
 
-    shoulda.stub(document, "getElementById", (id) => assert.equal(id, "marioCharacter"))
-    or
-    shoulda.stub(document, "getElementById", returns(myElement));
+    const fakeElement = { id: "abc" };
+    shoulda.stub(document, "getElementById", returns(fakeElement));
+
+How to stub a property:
+
+    shoulda.stub(window.location, "href", "http://example.com");
 
 Tips
 ----
-- Calling `shoulda.run()` with a String argument will only run a subset of your tests, e.g.
-  `shoulda.run("kill the turtle")`
 
-- Alternatively, you can use `should.only` or `context.only` when defining a test to run; when one or more
-  tests are defined using `should.only`, only those tests will be run when `shoulda.run()` is called.
+* Calling `shoulda.run()` with a String argument will only run a subset of your tests, e.g.
+  `shoulda.run("enemy interaction")`
 
-- You can customize how test status is reported by replacing the Tests.outputMethod property with your own
+* Alternatively, you can use `should.only` or `context.only` when defining a test. When one or more
+  tests are defined using `should.only`, `shoula.run()` will run only those tests.
+
+* You can customize how test status is reported by replacing the Tests.outputMethod property with your own
   function. By default, shoulda.js will use console.log in a browser and the global print() function in
   command line JavaScript shells like V8.
 
