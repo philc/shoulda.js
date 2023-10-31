@@ -8,7 +8,7 @@
  * To write your tests, use this format:
 
    import * as shoulda from "shoulda.js";
-   const {assert, context, setup, should, tearDown} = shoulda;
+   const {assert, context, setup, should, teardown} = shoulda;
 
    context("Chessboard",
      setup(() => { ... }),
@@ -132,13 +132,13 @@ AssertionError.prototype = new Error();
 AssertionError.prototype.constructor = AssertionError;
 
 /*
- * A Context is a named set of test methods and nested contexts, with optional setup and tearDown blocks.
- * - contents: an array which can include a setup and tearDown method, test methods, and nested contexts.
+ * A Context is a named set of test methods and nested contexts, with optional setup and teardown blocks.
+ * - contents: an array which can include a setup and teardown method, test methods, and nested contexts.
  */
 function Context(name) {
   this.name = name;
   this.setupMethod = null;
-  this.tearDownMethod = null;
+  this.teardownMethod = null;
   this.contexts = [];
   this.tests = [];
 }
@@ -174,8 +174,8 @@ function setup(fn) {
   contextStack[contextStack.length - 1].setupMethod = fn;
 }
 
-function tearDown(fn) {
-  contextStack[contextStack.length - 1].tearDownMethod = fn;
+function teardown(fn) {
+  contextStack[contextStack.length - 1].teardownMethod = fn;
 }
 
 function should(name, fn) {
@@ -296,8 +296,8 @@ const Tests = {
         await testMethod.fn.call(testScope, testScope);
       } finally {
         for (const context of contexts) {
-          if (context.tearDownMethod) {
-            await context.tearDownMethod.call(testScope, testScope);
+          if (context.teardownMethod) {
+            await context.teardownMethod.call(testScope, testScope);
           }
         }
       }
@@ -403,5 +403,5 @@ export {
   setup,
   should,
   stub,
-  tearDown,
+  teardown,
 };

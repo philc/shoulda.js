@@ -1,5 +1,5 @@
 import * as shoulda from "./shoulda.js";
-const { assert, context, setup, should, tearDown } = shoulda;
+const { assert, context, setup, should, teardown } = shoulda;
 
 shoulda.reset();
 
@@ -11,7 +11,7 @@ context("fixture: evaluation order", () => {
     should("should-1", () => order.push("should-1"));
   });
   should("should-2", () => order.push("should-2"));
-  tearDown(() => order.push("outer-teardown"));
+  teardown(() => order.push("outer-teardown"));
 });
 
 context("evaluation order", () => {
@@ -35,7 +35,7 @@ context("state is passed to tests", () => {
     assert.equal(123, t.state);
   });
 
-  tearDown((t) => assert.equal(123, t.state));
+  teardown((t) => assert.equal(123, t.state));
 });
 
 context("ensureCalled", () => {

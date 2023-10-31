@@ -10,7 +10,7 @@ In Shoulda.js, tests are grouped into related units called "contexts". Contexts 
 code which is common to all tests within that context:
 
     import * as shoulda from "shoulda.js";
-    const {assert, context, setup, should, tearDown} = shoulda;
+    const {assert, context, setup, should, teardown} = shoulda;
 
     context("super mario", () => {
       let game;
