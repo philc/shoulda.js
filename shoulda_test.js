@@ -39,14 +39,14 @@ context("state is passed to tests", () => {
 });
 
 context("ensureCalled", () => {
-  should("not fail if called", (t) => {
+  should("not fail if called", () => {
     const f = shoulda.ensureCalled();
     f();
   });
 });
 
 context("throwsError", () => {
-  should("catch error and pass the test", (t) => {
+  should("catch error and pass the test", () => {
     assert.throwsError(() => {
       throw new Error("This should be caught.");
     }, "Error");
