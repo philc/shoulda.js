@@ -84,4 +84,4 @@ Changelog
 
 License
 -------
-Licensed under the [MIT license](http://www.opensource.org/licenses/mit-license.php).
+Licensed under the [MIT license](./LICENSE).
