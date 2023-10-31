@@ -1,13 +1,13 @@
 Shoulda.js
 ==========
-Shoulda.js is a micro JavaScript unit testing framework. It gives you a tight syntax for writing terse,
-readable unit tests. It weighs in at under 350 lines and makes no assumptions about your JavaScript
-environment or libraries.
+Shoulda.js is a micro JavaScript unit testing framework. It gives you a tight syntax for writing
+terse, readable unit tests. It weighs in at under 350 lines and makes no assumptions about your
+JavaScript environment or libraries.
 
 Example usage
 -------------
-In Shoulda.js, tests are grouped into related units called "contexts". Contexts can optionally share setup
-code which is common to all tests within that context:
+In Shoulda.js, tests are grouped into related units called "contexts". Contexts can optionally share
+setup code which is common to all tests within that context:
 
     import * as shoulda from "shoulda.js";
     const {assert, context, setup, should, teardown} = shoulda;
@@ -44,8 +44,9 @@ That's it. To see the other available assertions, just glance through the source
 
 Stubs
 -----
-Stubbing means to temporarily redefine functions on objects for the duration of your test. This is commonly
-used to do things like replace a network call and hard-code its return value. Here's the syntax:
+Stubbing means to temporarily redefine functions on objects for the duration of your test. This is
+commonly used to do things like replace a network call and hard-code its return value. Here's the
+syntax:
 
     const fakeElement = { id: "abc" };
     shoulda.stub(document, "getElementById", returns(fakeElement));
@@ -56,7 +57,6 @@ How to stub a property:
 
 Tips
 ----
-
 * Calling `shoulda.run()` with a String argument will only run a subset of your tests, e.g.
   `shoulda.run("enemy interaction")`
 
@@ -66,8 +66,8 @@ Tips
 Changelog
 ---------
 * v2.0 (work in progress)
-  * Update the test syntax to use closures rather than arrays. This allows for more flexibility, is easier for
-    code editors to indent, and matches the syntax used by most JS testing libraries.
+  * Update the test syntax to use closures rather than arrays. This allows for more flexibility, is
+    easier for code editors to indent, and matches the syntax used by most JS testing libraries.
   * In test failure output, print complex objects on separate lines to improve readability.
   * Add "should.only" and "context.only" for programmatically limiting which tests will be run.
 * v1.0 (2013-03-02)
