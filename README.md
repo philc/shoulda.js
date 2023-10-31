@@ -7,9 +7,11 @@ assumptions about your JavaScript environment or libraries.
 Example usage
 -------------
 In Shoulda.js, tests are grouped into related units called "contexts". Contexts can optionally share
-setup code which is common to all tests within that context:
+setup code which is common to all tests within that context.
 
-    import * as shoulda from "shoulda.js";
+Usage in Deno:
+
+    import * as shoulda from "https://deno.land/x/shoulda/shoulda.js";
     const { assert, context, setup, should, teardown } = shoulda;
 
     context("Super mario", () => {
@@ -39,6 +41,18 @@ setup code which is common to all tests within that context:
     });
 
     await shoulda.run();
+
+Usage in Node.js:
+
+    npm install --save-dev shoulda.js
+
+    const shoulda = require("shoulda.js");
+    ...
+
+Usage in the browser:
+
+    import * as shoulda from "./shoulda.js";
+    ...
 
 Assertions
 ----------
