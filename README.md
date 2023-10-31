@@ -1,8 +1,8 @@
 Shoulda.js
 ==========
-Shoulda.js is a micro JavaScript unit testing framework. It gives you a tight syntax for writing
-terse, readable unit tests. It weighs in at under 350 lines and makes no assumptions about your
-JavaScript environment or libraries.
+Shoulda.js is a micro JavaScript unit testing framework. It provides the syntax for writing terse,
+readable unit tests. At under 360 lines of code, it's easy to understand and modify, and makes no
+assumptions about your JavaScript environment or libraries.
 
 Example usage
 -------------
@@ -10,7 +10,7 @@ In Shoulda.js, tests are grouped into related units called "contexts". Contexts 
 setup code which is common to all tests within that context:
 
     import * as shoulda from "shoulda.js";
-    const {assert, context, setup, should, teardown} = shoulda;
+    const { assert, context, setup, should, teardown } = shoulda;
 
     context("Super mario", () => {
       let game;
@@ -40,15 +40,25 @@ setup code which is common to all tests within that context:
 
     await shoulda.run();
 
-That's it. To see the other available assertions, just glance through the source.
+Assertions
+----------
+
+These assertions are available on `assert`:
+
+* `isTrue`
+* `isFalse`
+* `equal`
+* `throwsError(fn, errorName)`
+* `fail`
 
 Stubs
 -----
 Stubbing means to temporarily redefine functions on objects for the duration of your test. This is
-commonly used to do things like replace a network call and hard-code its return value. Here's the
-syntax:
+commonly used to do things like replace a network call and hard-code its return value. The syntax
+is:
 
     const fakeElement = { id: "abc" };
+    // returns(v) creates a function which, when called, returns "v".
     shoulda.stub(document, "getElementById", returns(fakeElement));
 
 How to stub a property:
@@ -57,11 +67,11 @@ How to stub a property:
 
 Tips
 ----
-* Calling `shoulda.run()` with a String argument will only run a subset of your tests, e.g.
+* Calling `shoulda.run()` with a String argument will only run a subset of the tests:
   `shoulda.run("enemy interaction")`
 
-* Alternatively, you can use `should.only` or `context.only` when defining a test. When one or more
-  tests are defined using `should.only`, `shoula.run()` will run only those tests.
+* Alternatively, you can use `should.only` or `context.only` when defining tests. When one or more
+  tests are defined using `should.only`, `shoulda.run()` will run only those tests.
 
 Changelog
 ---------
