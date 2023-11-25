@@ -1,8 +1,20 @@
 Shoulda.js
 ==========
-Shoulda.js is a micro JavaScript unit testing framework. It provides the syntax for writing terse,
-readable unit tests. At under 360 lines of code, it's easy to understand and modify, and makes no
-assumptions about your JavaScript environment or libraries.
+Shoulda.js is a JavaScript unit testing micro framework. It provides syntax for writing terse,
+readable tests. It makes no assumptions about your JavaScript environment or libraries. At about 280
+lines of code, it's easy to understand and modify It's been in use since 2010.
+
+This was created this for those who want to write unit tests, but who don't want to pull in large
+dependencies with functionality beyond what they need. For example, as of Nov 2023:
+
+| Lib        | Source files | Lines of code |
+| :--------- | -----------: | ------------: |
+| Shoulda.js | 1            | 250           |
+| Jest       | 539          | 52,096        |
+| Mocha      | 77           | 8,206         |
+| Jasmine    | 130          | 8,902         |
+
+Where the metrics "source files" and "lines of code" exclude comments, documentation, and tests.
 
 Example usage
 -------------
