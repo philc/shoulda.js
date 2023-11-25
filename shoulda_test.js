@@ -38,18 +38,27 @@ context("state is passed to tests", () => {
   teardown((t) => assert.equal(123, t.state));
 });
 
-context("ensureCalled", () => {
-  should("not fail if called", () => {
-    const f = shoulda.ensureCalled();
-    f();
+context("assertions", () => {
+  should("succeed when the condition is true", () => {
+    assert.isTrue(true);
+    assert.isFalse(false);
+    assert.equal(1, 1);
+    assert.equal([1], [1]);
   });
-});
 
-context("throwsError", () => {
-  should("catch error and pass the test", () => {
-    assert.throwsError(() => {
-      throw new Error("This should be caught.");
-    }, "Error");
+  context("ensureCalled", () => {
+    should("ensureCalled should not fail if called", () => {
+      const f = shoulda.ensureCalled();
+      f();
+    });
+  });
+
+  context("throwsError", () => {
+    should("catch error and pass the test", () => {
+      assert.throwsError(() => {
+        throw new Error("This should be caught.");
+      }, "Error");
+    });
   });
 });
 
