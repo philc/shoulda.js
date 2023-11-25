@@ -18,8 +18,8 @@ Where the metrics "source files" and "lines of code" exclude comments, documenta
 
 Example usage
 -------------
-In Shoulda.js, tests are grouped into related units called "contexts". Contexts can optionally share
-setup code which is common to all tests within that context.
+In Shoulda.js, tests are grouped into related units called contexts. Contexts can optionally include
+setup code which is run before every test within that context.
 
 Usage in Deno:
 
@@ -79,8 +79,8 @@ These assertions are available on `assert`:
 
 Stubs
 -----
-Stubbing means to temporarily redefine functions on objects for the duration of your test. This is
-commonly used to do things like replace a network call and hard-code its return value. The syntax
+Stubbing allows you to temporarily redefine functions on objects for the duration of your test. This
+is commonly used to do things like replace a network call and hard-code its return value. The syntax
 is:
 
     const fakeElement = { id: "abc" };
