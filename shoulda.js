@@ -257,8 +257,10 @@ const Tests = {
         }
       }
     } catch (error) {
-      failureMessage = error.message;
-      if (!(error instanceof AssertionError) && error.stack) {
+      // Note that error can be either a String or an Error.
+      const failedAssertion = error instanceof AssertionError;
+      failureMessage = failedAssertion ? error.message : error.toString();
+      if (!failedAssertion && error.stack) {
         failureMessage += "\n" + error.stack;
       }
     }
