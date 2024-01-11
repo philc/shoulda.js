@@ -1,6 +1,6 @@
 /*
- * A unit testing micro framework. Tests are grouped into "contexts", each of which can share
- * common setup functions.
+ * A unit testing micro framework. Tests are grouped into "contexts", each of which can share common
+ * setup functions.
  */
 
 /*
@@ -341,8 +341,7 @@ function clearStubs() {
   // twice.
   for (let i = stubbedObjects.length - 1; i >= 0; i--) {
     const stubProperties = stubbedObjects[i];
-    stubProperties.object[stubProperties.propertyName] =
-      stubProperties.original;
+    stubProperties.object[stubProperties.propertyName] = stubProperties.original;
   }
 }
 
