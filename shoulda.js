@@ -86,7 +86,7 @@ function ensureCalled(fn) {
     if (i >= 0) {
       Tests.requiredCallbacks.splice(i, 1); // Delete.
     }
-    return fn.apply(null, arguments);
+    return fn?.apply(null, arguments);
   };
   Tests.requiredCallbacks.push(wrappedFunction);
   return wrappedFunction;
