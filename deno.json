@@ -1,5 +1,8 @@
 {
   "fmt": {
     "lineWidth": 100
-  }
+  },
+  "name": "@philc/shoulda",
+  "version": "2.0.0",
+  "exports": "./shoulda.js"
 }
