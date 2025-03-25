@@ -23,7 +23,7 @@ setup code which is run before every test within that context.
 
 Usage in Deno:
 
-    import * as shoulda from "https://deno.land/x/shoulda/shoulda.js";
+    import * as shoulda from "jsr:@philc/shoulda";
     const { assert, context, setup, should, teardown } = shoulda;
 
     context("Super mario", () => {
