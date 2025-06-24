@@ -25,7 +25,7 @@ const assert = {
       ? JSON.stringify(expected) === JSON.stringify(actual)
       : expected === actual;
     if (!areEqual) {
-      this.fail(`\nExpected:\n${this._print(expected)}\nGot:\n${this._print(actual)}\n`);
+      this.fail(`Expected:\n${this._print(expected)}\nGot:\n${this._print(actual)}`);
     }
   },
 
@@ -90,12 +90,14 @@ function ensureCalled(fn) {
   return wrappedFunction;
 }
 
-function AssertionError(message) {
-  this.name = AssertionError;
-  this.message = message;
+class AssertionError extends Error {
+  constructor(message) {
+    super(message);
+    this.name = "AssertionError";
+    // Omit this constructor from the error's backtrace.
+    Error.captureStackTrace?.(this, AssertionError);
+  }
 }
-AssertionError.prototype = new Error();
-AssertionError.prototype.constructor = AssertionError;
 
 /*
  * A Context is a named set of test methods and nested contexts, with optional setup and teardown
@@ -235,36 +237,65 @@ const Tests = {
     // This is the scope which all references to "this" in the setup and test methods resolve to.
     const testScope = {};
 
-    try {
+    const errors = [];
+
+    for (const context of contexts.filter((c) => c.setupMethod)) {
       try {
-        for (const context of contexts) {
-          if (context.setupMethod) {
-            await context.setupMethod.call(testScope, testScope);
-          }
-        }
-        await testMethod.fn.call(testScope, testScope);
-      } finally {
-        for (const context of contexts) {
-          if (context.teardownMethod) {
-            await context.teardownMethod.call(testScope, testScope);
-          }
-        }
-      }
-    } catch (error) {
-      // Note that error can be either a String or an Error.
-      const failedAssertion = error instanceof AssertionError;
-      failureMessage = failedAssertion ? error.message : error.toString();
-      if (!failedAssertion && error.stack) {
-        failureMessage += "\n" + error.stack;
+        await context.setupMethod.call(testScope, testScope);
+      } catch (error) {
+        errors.push(error);
+        break;
       }
     }
 
-    if (!failureMessage && this.requiredCallbacks.length > 0) {
-      failureMessage = "A callback function should have been called during this test, but wasn't.";
+    if (errors.length == 0) {
+      try {
+        await testMethod.fn.call(testScope, testScope);
+      } catch (error) {
+        errors.push(error);
+      }
     }
-    if (failureMessage) {
+
+    for (const context of contexts.filter((c) => c.teardownMethod)) {
+      try {
+        await context.teardownMethod.call(testScope, testScope);
+      } catch (error) {
+        errors.push(error);
+        break;
+      }
+    }
+
+    if (this.requiredCallbacks.length > 0) {
+      errors.push("A callback function should have been called during this test, but wasn't.");
+    }
+
+    if (errors.length > 0) {
       Tests.testsFailed++;
-      Tests.printFailure(fullTestName, failureMessage);
+    }
+
+    // Print the errors in the order they occurred in the setup, test, teardown chain.
+    for (const [i, error] of Object.entries(errors)) {
+      // Note that in JavaScript, any object can be thrown, even a string or null.
+      let message;
+      if (Error.isError(error)) {
+        if (error instanceof AssertionError) {
+          message = error.message;
+        } else {
+          // In Deno and Chrome, error.stack also includes the error's message.
+          message = error.stack;
+        }
+      } else {
+        // Thrown types which are not Errors will not have a backtrace.
+        message = String(error);
+      }
+
+      // For the first failure only, print the failed test header message.
+      if (i == 0) {
+        Tests.printFailure(fullTestName, message);
+      } else {
+        console.log("---"); // Add a visual separator between backtraces when there are many.
+        console.log(message);
+      }
     }
 
     this.requiredCallbacks = [];
@@ -285,7 +316,7 @@ const Tests = {
   },
 
   printFailure(testName, failureMessage) {
-    console.log(`Fail "${testName}"`, failureMessage);
+    console.log(`Fail "${testName}"\n${failureMessage}`);
   },
 };
 
