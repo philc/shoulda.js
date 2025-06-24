@@ -1,6 +1,6 @@
 /*
  * A unit testing micro framework. Tests are grouped into "contexts", each of which can share common
- * setup functions.
+ * setup and teardown functions.
  */
 
 /*
@@ -25,9 +25,7 @@ const assert = {
       ? JSON.stringify(expected) === JSON.stringify(actual)
       : expected === actual;
     if (!areEqual) {
-      this.fail(
-        `\nExpected:\n${this._print(expected)}\nGot:\n${this._print(actual)}\n`,
-      );
+      this.fail(`\nExpected:\n${this._print(expected)}\nGot:\n${this._print(actual)}\n`);
     }
   },
 
@@ -101,7 +99,7 @@ AssertionError.prototype.constructor = AssertionError;
 
 /*
  * A Context is a named set of test methods and nested contexts, with optional setup and teardown
- * blocks.
+ * methods.
  */
 function Context(name) {
   this.name = name;
@@ -166,8 +164,7 @@ const Tests = {
   testsRun: 0,
   testsFailed: 0,
 
-  // The list of callbacks to ensure are called by the end of the test. This list is appended to by
-  // `ensureCalled`.
+  // The list of callbacks created by `ensureCalled` which must be called by the end of the test.
   requiredCallbacks: [],
 
   // True if, during the collection phase, should.only or context.only was used.
@@ -218,19 +215,16 @@ const Tests = {
   },
 
   /*
-   * Run a test method. This will run all setup methods in all contexts, and then all teardown
-   * methods.
+   * Run a test. This will run all setup methods in all contexts, and then all teardown methods.
    * - testMethod: an object with keys name, fn.
    * - contexts: an array of Contexts, ordered outer to inner.
    * - testNameFilter: A String. If provided, only run the test if it matches testNameFilter.
    */
   async runTest(testMethod, contexts, testNameFilter) {
-    if (
-      this.focusIsUsed && !testMethod.isFocused &&
-      !contexts.some((c) => c.isFocused)
-    ) {
-      return;
-    }
+    const shouldSkip = this.focusIsUsed && !testMethod.isFocused &&
+      !contexts.some((c) => c.isFocused);
+    if (shouldSkip) return;
+
     const fullTestName = this.fullyQualifiedName(testMethod.name, contexts);
     if (testNameFilter && !fullTestName.includes(testNameFilter)) {
       return;
@@ -238,7 +232,7 @@ const Tests = {
 
     this.testsRun++;
     let failureMessage = null;
-    // This is the scope which all references to "this" in the setup and test methods will resolve to.
+    // This is the scope which all references to "this" in the setup and test methods resolve to.
     const testScope = {};
 
     try {
@@ -266,8 +260,7 @@ const Tests = {
     }
 
     if (!failureMessage && this.requiredCallbacks.length > 0) {
-      failureMessage =
-        "A callback function should have been called during this test, but it wasn't.";
+      failureMessage = "A callback function should have been called during this test, but wasn't.";
     }
     if (failureMessage) {
       Tests.testsFailed++;
