@@ -7,20 +7,20 @@
  * Assertions.
  */
 const assert = {
-  isTrue: function (value) {
+  isTrue(value) {
     if (!value) {
       this.fail("Expected true, but got " + value);
     }
   },
 
-  isFalse: function (value) {
+  isFalse(value) {
     if (value) {
       this.fail("Expected false, but got " + value);
     }
   },
 
   // Does a deep-equal check on complex objects.
-  equal: function (expected, actual) {
+  equal(expected, actual) {
     const areEqual = typeof expected === "object"
       ? JSON.stringify(expected) === JSON.stringify(actual)
       : expected === actual;
@@ -32,7 +32,7 @@ const assert = {
   },
 
   // We cannot name this function simply "throws", because it's a reserved JavaScript keyword.
-  throwsError: function (expression, errorName) {
+  throwsError(expression, errorName) {
     try {
       expression();
     } catch (error) {
@@ -55,12 +55,12 @@ const assert = {
     }
   },
 
-  fail: function (message) {
+  fail(message) {
     throw new AssertionError(message);
   },
 
   // Used for printing the arguments passed to assertions.
-  _print: function (object) {
+  _print(object) {
     if (object === null) return "null";
     else if (object === undefined) return "undefined";
     else if (typeof object === "string") return '"' + object + '"';
@@ -177,7 +177,7 @@ const Tests = {
    * Run all contexts which have been defined.
    * - testNameFilter: a String. If provided, only run tests which match testNameFilter will be run.
    */
-  run: async function (testNameFilter) {
+  async run(testNameFilter) {
     // Run every top level context (i.e. those not defined within another context). These will in
     // turn run any nested contexts. The very last context ever added to Tests.testContexts is a top
     // level context. Note that any contexts which have not already been run by a previous top level
@@ -196,7 +196,7 @@ const Tests = {
    * useful when running shoulda tests in a REPL environment, to prevent tests from getting defined
    * multiple times when a file is re-evaluated.
    */
-  reset: function () {
+  reset() {
     this.topLevelContexts = [];
     this.focusedTests = [];
     this.focusIsUsed = false;
@@ -206,7 +206,7 @@ const Tests = {
    * Run a context. This runs the test methods defined in the context first, and then any nested
    * contexts.
    */
-  runContext: async function (context, parentContexts, testNameFilter) {
+  async runContext(context, parentContexts, testNameFilter) {
     parentContexts = parentContexts.concat([context]);
     for (const test of context.tests) {
       if (test instanceof Context) {
@@ -224,7 +224,7 @@ const Tests = {
    * - contexts: an array of Contexts, ordered outer to inner.
    * - testNameFilter: A String. If provided, only run the test if it matches testNameFilter.
    */
-  runTest: async function (testMethod, contexts, testNameFilter) {
+  async runTest(testMethod, contexts, testNameFilter) {
     if (
       this.focusIsUsed && !testMethod.isFocused &&
       !contexts.some((c) => c.isFocused)
@@ -279,11 +279,11 @@ const Tests = {
   },
 
   // The fully-qualified name of the test or context, e.g. "context1: context2: testName".
-  fullyQualifiedName: function (testName, contexts) {
+  fullyQualifiedName(testName, contexts) {
     return contexts.map((c) => c.name).concat(testName).join(": ");
   },
 
-  printTestSummary: function () {
+  printTestSummary() {
     if (this.testsFailed > 0) {
       console.log(`Fail (${Tests.testsFailed}/${Tests.testsRun})`);
     } else {
@@ -291,7 +291,7 @@ const Tests = {
     }
   },
 
-  printFailure: function (testName, failureMessage) {
+  printFailure(testName, failureMessage) {
     console.log(`Fail "${testName}"`, failureMessage);
   },
 };
