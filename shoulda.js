@@ -233,7 +233,6 @@ const Tests = {
     }
 
     this.testsRun++;
-    let failureMessage = null;
     // This is the scope which all references to "this" in the setup and test methods resolve to.
     const testScope = {};
 
