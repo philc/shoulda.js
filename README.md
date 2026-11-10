@@ -147,6 +147,8 @@ Tips
 
 Changelog
 ---------
+* Unreleased
+  * The npm package is an ES module only. CommonJS code can still `require()` it in Node.js 23+.
 * v2.0 (2023-10-30)
   * Update the test syntax to use closures rather than arrays. This allows for more flexibility, is
     easier for code editors to indent, and matches the syntax used by most JS testing libraries.

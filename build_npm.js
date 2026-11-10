@@ -16,6 +16,8 @@ await build({
     { kind: "bin", name: "shoulda", path: "./run_tests.js" },
   ],
   test: false,
+  // Only build an ES module. Node supports them, including via require() since Node 23.
+  scriptModule: false,
   outDir: "./npm",
   shims: {
     deno: true,
@@ -38,5 +40,10 @@ await build({
     // steps to run after building and before running the tests
     Deno.copyFileSync("LICENSE", "npm/LICENSE");
     Deno.copyFileSync("README.md", "npm/README.md");
+    // dnt exports the module under the "import" condition only. Export it unconditionally, so that
+    // CommonJS code can require() it too.
+    const packageJson = JSON.parse(Deno.readTextFileSync("npm/package.json"));
+    packageJson.exports["."] = "./esm/shoulda.js";
+    Deno.writeTextFileSync("npm/package.json", JSON.stringify(packageJson, null, 2) + "\n");
   },
 });
