@@ -23,7 +23,11 @@ setup code which is run before every test within that context.
 
 Usage in Deno:
 
-    import * as shoulda from "jsr:@philc/shoulda";
+    deno add jsr:@philc/shoulda
+
+Then, in a file named e.g. `mario_test.js`:
+
+    import * as shoulda from "@philc/shoulda";
     const { assert, context, setup, should, teardown } = shoulda;
 
     context("Super mario", () => {
@@ -52,24 +56,33 @@ Usage in Deno:
       });
     });
 
-    await shoulda.run();
+Run it with shoulda's test runner; see [Running test files](#running-test-files).
 
 Usage in Node.js:
 
     npm install --save-dev shoulda.js
 
-    const shoulda = require("shoulda.js");
+Then, in a file named e.g. `mario_test.js`:
+
+    import * as shoulda from "shoulda.js";
     ...
+
+Run it with shoulda's test runner; see [Running test files](#running-test-files).
 
 Usage in the browser:
 
     import * as shoulda from "./shoulda.js";
+    // Write the tests.
     ...
+
+    // Run the tests.
+    await shoulda.run();
 
 Running test files
 ------------------
 
-Shoulda's test runner will find every file named *_test.js or *.test.js in the project and run them.
+Shoulda's test runner finds every file named `*_test.js` or `*.test.js` in the current directory and
+runs them.
 
 **In Deno**
 
@@ -87,11 +100,8 @@ Then:
     # Run every file named *_test.js or *.test.js
     deno task test
 
-    # Run only the test files in a directory, or specific test files
-    deno task test someDir some_test.js
-
-    # Run only the tests whose names include "name of test"
-    deno task test --filter "name of test"
+    # Run only the tests in "exampleDir" whose names include "example test"
+    deno task test exampleDir --filter "example test"
 
 **In Node.js**
 
@@ -106,11 +116,8 @@ Then:
     # Run every file named *_test.js or *.test.js
     npm test
 
-    # Run only the test files in a directory, or specific test files
-    npm test -- someDir some_test.js
-
-    # Run only the tests whose names include "name of test"
-    npm test -- --filter "name of test"
+    # Run only the tests in "exampleDir" whose names include "example test"
+    npm test -- exampleDir --filter "example test"
 
 Assertions
 ----------
@@ -139,8 +146,8 @@ How to stub a property:
 
 Tips
 ----
-* Calling `shoulda.run()` with a String argument will only run a subset of the tests:
-  `shoulda.run("enemy interaction")`
+* When calling `shoulda.run()` yourself, pass it a string to run only the tests whose names include
+  that string: `shoulda.run("enemy interaction")`.
 
 * Alternatively, you can use `should.only` or `context.only` when defining tests. When one or more
   tests are defined using `should.only`, `shoulda.run()` will run only those tests.
@@ -148,6 +155,9 @@ Tips
 Changelog
 ---------
 * Unreleased
+  * Add a test runner, `jsr:@philc/shoulda/run` in Deno and the `shoulda` command in Node.js, which
+    finds and runs test files.
+  * `shoulda.run()` fails when no tests have been defined.
   * The npm package is an ES module only. CommonJS code can still `require()` it in Node.js 23+.
 * v2.0 (2023-10-30)
   * Update the test syntax to use closures rather than arrays. This allows for more flexibility, is
