@@ -4,5 +4,11 @@
   },
   "name": "@philc/shoulda",
   "version": "2.0.0",
-  "exports": "./shoulda.js"
+  "exports": {
+    ".": "./shoulda.js",
+    "./run": "./run_tests.js"
+  },
+  "tasks": {
+    "test": "deno run --allow-read run_tests.js"
+  }
 }

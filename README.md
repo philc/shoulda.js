@@ -66,6 +66,52 @@ Usage in the browser:
     import * as shoulda from "./shoulda.js";
     ...
 
+Running test files
+------------------
+
+Shoulda's test runner will find every file named *_test.js or *.test.js in the project and run them.
+
+**In Deno**
+
+Add shoulda's test runner as a task in `deno.json`:
+
+    "tasks": {
+      "test": "deno run -A @philc/shoulda/run"
+    }
+
+`@philc/shoulda` resolves through the entry `deno add` put in `deno.json`, so the runner and your
+tests use the same version of shoulda.
+
+Then:
+
+    # Run every file named *_test.js or *.test.js
+    deno task test
+
+    # Run only the test files in a directory, or specific test files
+    deno task test someDir some_test.js
+
+    # Run only the tests whose names include "name of test"
+    deno task test --filter "name of test"
+
+**In Node.js**
+
+Add shoulda's test runner as a script in `package.json`:
+
+    "scripts": {
+      "test": "shoulda"
+    }
+
+Then:
+
+    # Run every file named *_test.js or *.test.js
+    npm test
+
+    # Run only the test files in a directory, or specific test files
+    npm test -- someDir some_test.js
+
+    # Run only the tests whose names include "name of test"
+    npm test -- --filter "name of test"
+
 Assertions
 ----------
 

@@ -10,7 +10,11 @@ if (Deno.args.length != 1) {
 }
 
 await build({
-  entryPoints: ["./shoulda.js"],
+  entryPoints: [
+    "./shoulda.js",
+    // Installs the test runner as the `shoulda` command, for use in package.json scripts.
+    { kind: "bin", name: "shoulda", path: "./run_tests.js" },
+  ],
   test: false,
   outDir: "./npm",
   shims: {
