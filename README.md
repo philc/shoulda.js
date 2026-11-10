@@ -1,5 +1,5 @@
-Shoulda.js
-==========
+# Shoulda.js
+
 Shoulda.js is a JavaScript unit testing micro framework. It provides syntax for writing concise,
 readable tests. It makes no assumptions about your JavaScript environment or libraries. At about 280
 lines of code, it's easy to understand and modify. It's been in use since 2010.
@@ -16,8 +16,8 @@ dependencies with functionality beyond what they need. For example, as of Nov 20
 
 Where the metrics "source files" and "lines of code" exclude comments, documentation, and tests.
 
-Example usage
--------------
+## Example usage
+
 In Shoulda.js, tests are grouped into related units called contexts. Contexts can optionally include
 setup code which is run before every test within that context.
 
@@ -78,8 +78,7 @@ Usage in the browser:
     // Run the tests.
     await shoulda.run();
 
-Running test files
-------------------
+## Running test files
 
 Shoulda's test runner finds every file named `*_test.js` or `*.test.js` in the current directory and
 runs them.
@@ -119,8 +118,7 @@ Then:
     # Run only the tests in "exampleDir" whose names include "example test"
     npm test -- exampleDir --filter "example test"
 
-Assertions
-----------
+## Assertions
 
 These assertions are available on `assert`:
 
@@ -130,8 +128,8 @@ These assertions are available on `assert`:
 * `throwsError(fn, errorName)`
 * `fail`
 
-Stubs
------
+## Stubs
+
 Stubbing allows you to temporarily redefine functions on objects for the duration of your test. This
 is commonly used to do things like replace a network call and hard-code its return value. The syntax
 is:
@@ -144,16 +142,16 @@ How to stub a property:
 
     shoulda.stub(window.location, "href", "http://example.com");
 
-Tips
-----
+## Tips
+
 * When calling `shoulda.run()` yourself, pass it a string to run only the tests whose names include
   that string: `shoulda.run("enemy interaction")`.
 
 * Alternatively, you can use `should.only` or `context.only` when defining tests. When one or more
   tests are defined using `should.only`, `shoulda.run()` will run only those tests.
 
-Changelog
----------
+## Changelog
+
 * Unreleased
   * Add a test runner, `jsr:@philc/shoulda/run` in Deno and the `shoulda` command in Node.js, which
     finds and runs test files.
@@ -166,6 +164,6 @@ Changelog
   * Add "should.only" and "context.only" for programmatically limiting which tests will be run.
 * v1.0 (2013-03-02)
 
-License
--------
+## License
+
 Licensed under the [MIT license](./LICENSE).
