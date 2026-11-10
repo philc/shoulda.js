@@ -152,7 +152,7 @@ How to stub a property:
 
 ## Changelog
 
-* Unreleased
+* v2.1 (2026-11-09)
   * Add a test runner, `jsr:@philc/shoulda/run` in Deno and the `shoulda` command in Node.js, which
     finds and runs test files.
   * `shoulda.run()` fails when no tests have been defined.
