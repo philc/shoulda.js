@@ -76,6 +76,11 @@ if (!(await shoulda.run())) {
 }
 shoulda.reset();
 
+// Running when no tests have been defined should fail.
+if (await shoulda.run()) {
+  throw new Error("run() should fail when no tests have been defined.");
+}
+
 const testsRan = [];
 context("skipping tests", () => {
   should.only("run A", () => testsRan.push("A"));

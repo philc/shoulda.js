@@ -183,6 +183,12 @@ const Tests = {
     // context must themselves be top level contexts.
     this.testsRun = 0;
     this.testsFailed = 0;
+    // Running zero tests is almost always a mistake, e.g. a test file failed to be imported, so
+    // treat it as a failure rather than a pass.
+    if (this.topLevelContexts.length == 0) {
+      console.log("Fail: no tests have been defined.");
+      return false;
+    }
     for (const context of this.topLevelContexts) {
       await this.runContext(context, [], testNameFilter);
     }
