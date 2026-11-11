@@ -161,7 +161,7 @@ How to stub a property:
 
 ## Changelog
 
-* Unreleased
+* v2.2 (2026-11-10)
   * Teardown functions receive the test's name and errors, e.g. to save debugging info on failure.
 * v2.1 (2026-11-09)
   * Add a test runner, `jsr:@philc/shoulda/run` in Deno and the `shoulda` command in Node.js, which

@@ -3,7 +3,7 @@
     "lineWidth": 100
   },
   "name": "@philc/shoulda",
-  "version": "2.1.0",
+  "version": "2.2.0",
   "exports": {
     ".": "./shoulda.js",
     "./run": "./run_tests.js"
