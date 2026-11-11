@@ -38,6 +38,21 @@ context("state is passed to tests", () => {
   teardown((t) => assert.equal(123, t.state));
 });
 
+const teardownInfo = [];
+context("fixture: teardown receives test info", () => {
+  should("pass", () => {});
+  teardown((_t, testInfo) => teardownInfo.push(structuredClone(testInfo)));
+});
+
+context("teardown", () => {
+  should("receive the test's name and no errors when the test passed", () => {
+    assert.equal(
+      [{ name: "fixture: teardown receives test info: pass", errors: [] }],
+      teardownInfo,
+    );
+  });
+});
+
 context("assertions", () => {
   should("succeed when the condition is true", () => {
     assert.isTrue(true);
@@ -80,6 +95,37 @@ shoulda.reset();
 if (await shoulda.run()) {
   throw new Error("run() should fail when no tests have been defined.");
 }
+
+// Teardown methods should see a failed test's errors.
+let failedTestInfo;
+context("teardown of a failing test", () => {
+  should("fail", () => {
+    throw new Error("Expected failure.");
+  });
+  teardown((_t, testInfo) => failedTestInfo = testInfo);
+});
+// Silence the failure output from this deliberately failing test.
+const originalLog = console.log;
+console.log = () => {};
+const failingRunResult = await shoulda.run();
+console.log = originalLog;
+shoulda.reset();
+if (failingRunResult) {
+  throw new Error("run() should fail when a test throws.");
+}
+
+context("teardown", () => {
+  should("receive the errors of a failed test", () => {
+    assert.equal("teardown of a failing test: fail", failedTestInfo.name);
+    assert.equal(1, failedTestInfo.errors.length);
+    assert.equal("Expected failure.", failedTestInfo.errors[0].message);
+  });
+});
+
+if (!(await shoulda.run())) {
+  throw new Error("Teardown tests failed.");
+}
+shoulda.reset();
 
 const testsRan = [];
 context("skipping tests", () => {

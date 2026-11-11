@@ -150,8 +150,19 @@ How to stub a property:
 * Alternatively, you can use `should.only` or `context.only` when defining tests. When one or more
   tests are defined using `should.only`, `shoulda.run()` will run only those tests.
 
+* Teardown functions receive a second argument with the test's full name and the errors it has
+  thrown so far, which is useful for saving debugging info when a test fails:
+
+      teardown((t, testInfo) => {
+        if (testInfo.errors.length > 0) {
+          saveScreenshot(testInfo.name);
+        }
+      });
+
 ## Changelog
 
+* Unreleased
+  * Teardown functions receive the test's name and errors, e.g. to save debugging info on failure.
 * v2.1 (2026-11-09)
   * Add a test runner, `jsr:@philc/shoulda/run` in Deno and the `shoulda` command in Node.js, which
     finds and runs test files.

@@ -261,9 +261,12 @@ const Tests = {
       }
     }
 
+    // Teardown methods receive info about the test and its failures so they can optionally do
+    // debug logging when the test has failed.
+    const testInfo = { name: fullTestName, errors };
     for (const context of contexts.filter((c) => c.teardownMethod)) {
       try {
-        await context.teardownMethod.call(testScope, testScope);
+        await context.teardownMethod.call(testScope, testScope, testInfo);
       } catch (error) {
         errors.push(error);
         break;
